@@ -1,15 +1,21 @@
 {
   "name": "website",
-  "type": "module",
   "version": "0.0.1",
+  "type": "module",
   "scripts": {
-    "dev": "astro dev",
-    "start": "astro dev",
+    "dev": "astro dev --port 3000",
+    "start": "astro dev --port 3000",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "server": "node server/server.js"
   },
   "dependencies": {
-    "astro": "^4.15.4"
+    "astro": "^4.16.6",
+    "axios": "^0.21.4",
+    "body-parser": "^1.20.3",
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
+    "nodemailer": "^6.9.15"
   }
 }

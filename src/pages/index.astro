@@ -1,16 +1,118 @@
 ---
-
+import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout>
+  <div class="parent">
+    <!-- Logo and Text Block -->
+    <div class="div2">
+      <div class="logo-container">
+        <img src="src/assets/icons/ig-logo.svg" alt="Company Logo" class="logo-image" />
+      </div>
+      <div class="text-container">
+        <div class="text-block">
+          <h2>IANA GLUSHACH</h2>
+          <hr class="separator-line" />
+          <p class="b-c-text">Bonsai and Ceramics</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- "We Are Coming Soon" -->
+    <div class="div6">
+      <h1>We Are Coming Soon</h1>
+    </div>
+
+    <!-- Tagline -->
+    <div class="div7">
+      <p class="tagline">We are working hard to launch our new website. Stay tuned!</p>
+    </div>
+
+    <!-- Visit Etsy Store link -->
+    <div class="div7">
+      <a href="https://www.etsy.com/shop/YourEtsyStore" class="etsy-store-link">Visit our Etsy Store</a>
+    </div>
+
+    <!-- Subscription form -->
+    <div class="div8">
+      <form id="subscribeForm" action="http://localhost:4321/api/subscribe" method="POST" class="subscribe-form">
+        <input type="email" name="email" placeholder="Enter your e-mail" aria-label="Email Input" required />
+        <button type="submit" aria-label="Notify me when launched">Notify Me</button>
+        <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response" />
+      </form>
+
+      <!-- Success message, hidden by default -->
+      <div id="successMessage" class="success-message" style="display: none;">
+        <h2>Thank you for subscribing!</h2>
+        <p>We will notify you when our website launches.</p>
+      </div>
+
+      <!-- Error message, hidden by default -->
+      <div id="errorMessage" class="error-message" style="display: none;">
+        <h2>An error occurred!</h2>
+        <p>Please try again later.</p>
+      </div>
+    </div>
+
+    <!-- Follow us section -->
+    <div class="div9">
+      <h3>Follow us on</h3>
+    </div>
+    <div class="div10">
+      <div class="social-icons">
+        <a href="https://www.instagram.com/ig_bonsai_ceramics/" target="_blank" aria-label="Instagram">
+          <img src="src/assets/icons/insta.png" alt="Instagram" />
+        </a>
+        <a href="https://www.facebook.com/IGbonsaiCeramics/" target="_blank" aria-label="Facebook">
+          <img src="src/assets/icons/facebook.png" alt="Facebook" />
+        </a>
+        <a href="https://www.youtube.com" target="_blank" aria-label="YouTube">
+          <img src="src/assets/icons/you-tube.png" alt="YouTube" />
+        </a>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="div13">
+      <footer>
+        2024 &copy; Iana Glushach Bonsai and Ceramics - All Rights Reserved
+      </footer>
+    </div>
+  </div>
+
+  <!-- JavaScript to handle form submission and display messages -->
+  <script>
+    document.getElementById('subscribeForm').addEventListener('submit', function (event) {
+      event.preventDefault();
+  
+      // Hide the form and display the success message before the fetch request
+      document.getElementById('subscribeForm').style.display = 'none';
+      document.getElementById('successMessage').style.display = 'block';
+  
+      fetch(event.target.action, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams(new FormData(event.target)),
+      })
+        .then(response => {
+          if (!response.ok) {
+            // If the server responds with an error, show the error message
+            throw new Error('Server error');
+          }
+          return response.text();
+        })
+        .then(() => {
+          // Successfully handled on the server, no further action needed
+        })
+        .catch((error) => {
+          // Show the form again and display an error message
+          document.getElementById('subscribeForm').style.display = 'block';
+          document.getElementById('successMessage').style.display = 'none';
+          document.getElementById('errorMessage').style.display = 'block';
+          console.error('Error:', error.message);
+        });
+    });
+  </script>
+</BaseLayout>
