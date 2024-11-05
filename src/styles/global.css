@@ -69,11 +69,11 @@
 .div6 {
     text-align: left; /* Align text to the left */
     width: 100%; /* Ensure no text gets cut off */
-    margin-bottom: 15px; /* Add space between the line and the next text */
+    margin-bottom: 10px; /* Add space between the line and the next text */
 }
 
 .div6 h1 {
-    font-size: 3.2rem; /* Make "We Are Coming Soon" slightly smaller */
+    font-size: 1.8rem; /* Make "We Are Coming Soon" slightly smaller */
     line-height: 1.2;
 }
 
@@ -87,7 +87,7 @@
 
 /* Add Etsy Store Link below the tagline */
 .etsy-store-link {
-    font-size: 1.25rem;
+    font-size: 3 rem;
     font-weight: bold;
     color: #4E3B2A;
     text-decoration: none;
