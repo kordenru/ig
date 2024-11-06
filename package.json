@@ -11,6 +11,7 @@
     "server": "node server/server.js"
   },
   "dependencies": {
+    "@astrojs/netlify": "^5.5.4",
     "astro": "^4.16.6",
     "axios": "^0.21.4",
     "body-parser": "^1.20.3",

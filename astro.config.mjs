@@ -1,7 +1,17 @@
 import { defineConfig } from 'astro/config';
 
+import netlify from '@astrojs/netlify';
+
 export default defineConfig({
-  srcDir: './src',        // Path to source files
-  publicDir: './public',  // Path to public assets (e.g., images, styles)
-  outDir: './dist',       // Output directory for Netlify to deploy
+  // Path to source files
+  srcDir: './src',
+
+  // Path to public assets (e.g., images, styles)
+  publicDir: './public',
+
+  // Output directory for Netlify to deploy
+  outDir: './dist',
+
+  output: 'server',
+  adapter: netlify()
 });
