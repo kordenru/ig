@@ -1,0 +1,12 @@
+[build]
+  publish = "dist"
+  command = "npm run build"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+[build.environment]
+  EMAIL_USER = "your-email@gmail.com"
+  EMAIL_PASS = "your-email-password"
+  RECAPTCHA_SECRET_KEY = "YOUR_RECAPTCHA_SECRET_KEY"
