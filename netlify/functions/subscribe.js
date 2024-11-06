@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import nodemailer from 'nodemailer';
+import axios from 'axios';
 
 // Define the path to the CSV file in the Netlify function environment
 const filePath = path.resolve('/tmp/subscribers.csv'); // Use /tmp for serverless environments
@@ -19,6 +20,26 @@ const transporter = nodemailer.createTransport({
     },
 });
 
+// Function to verify reCAPTCHA
+async function verifyRecaptcha(token) {
+    const secretKey = process.env.RECAPTCHA_SECRET_KEY; // Set this in Netlify's environment variables
+
+    try {
+        const response = await axios.post(
+            'https://www.google.com/recaptcha/api/siteverify', null, {
+                params: {
+                    secret: secretKey,
+                    response: token,
+                },
+            }
+        );
+        return response.data.success;
+    } catch (error) {
+        console.error('Error verifying reCAPTCHA:', error);
+        return false;
+    }
+}
+
 // Netlify function to handle subscription form submission
 export async function handler(event) {
     console.log("Function triggered. HTTP Method:", event.httpMethod);
@@ -29,25 +50,24 @@ export async function handler(event) {
         return { statusCode: 405, body: 'Method Not Allowed' };
     }
 
-    // Initialize email variable
-    let email;
+    let email, recaptchaToken;
 
     // Parse the request body, handling JSON and form-encoded data
     try {
         if (event.headers['content-type'] === 'application/json') {
-            // JSON body parsing
             const body = JSON.parse(event.body);
             email = body.email;
+            recaptchaToken = body['g-recaptcha-response'];
         } else if (event.headers['content-type'] === 'application/x-www-form-urlencoded') {
-            // Form-urlencoded parsing
             const params = new URLSearchParams(event.body);
             email = params.get('email');
+            recaptchaToken = params.get('g-recaptcha-response');
         } else {
             throw new Error("Unsupported content type");
         }
 
-        if (!email) {
-            throw new Error("Email not provided");
+        if (!email || !recaptchaToken) {
+            throw new Error("Missing email or reCAPTCHA token");
         }
 
         console.log("Parsed email:", email);
@@ -55,8 +75,14 @@ export async function handler(event) {
         console.error('Error parsing request body:', error);
         return {
             statusCode: 400,
-            body: 'Invalid request format or missing email.',
+            body: 'Invalid request format or missing email/recaptcha token.',
         };
+    }
+
+    // Verify reCAPTCHA
+    const isHuman = await verifyRecaptcha(recaptchaToken);
+    if (!isHuman) {
+        return { statusCode: 400, body: 'reCAPTCHA verification failed.' };
     }
 
     // Append email to CSV file in /tmp
@@ -82,7 +108,7 @@ export async function handler(event) {
     // Send email notification to the owner
     const mailOptions = {
         from: process.env.EMAIL_USER,
-        to: process.env.EMAIL_USER,
+        to: process.env.EMAIL_USER, // Owner's email
         subject: 'New Subscriber Notification',
         text: `You have a new subscriber: ${email}\n\nTotal subscribers: ${totalSubscribers}`,
     };
