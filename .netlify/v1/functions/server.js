@@ -42,17 +42,30 @@ export async function handler(event) {
       text: `You have a new subscriber: ${email}\n\nTotal subscribers: ${totalSubscribers}`,
     };
 
-    await transporter.sendMail(mailOptions);
+    // Log before sending the email
+    console.log("Attempting to send email...");
+    const emailResponse = await transporter.sendMail(mailOptions);
+    console.log("Email sent:", emailResponse);
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: 'Subscription successful' }),
+      headers: { 'Content-Type': 'text/html' },
+      body: `<div style="text-align: center; font-family: Arial;">
+               <h2>Thank you for subscribing!</h2>
+               <p>We will notify you when our website launches.</p>
+             </div>`,
     };
   } catch (error) {
     console.error('Error handling subscription:', error);
+
+    // Return an HTML error response
     return {
       statusCode: 500,
-      body: 'An error occurred while processing your request.',
+      headers: { 'Content-Type': 'text/html' },
+      body: `<div style="text-align: center; font-family: Arial; color: red;">
+               <h2>Error</h2>
+               <p>There was an issue processing your subscription. Please try again later.</p>
+             </div>`,
     };
   }
 }
