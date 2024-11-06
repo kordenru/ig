@@ -37,7 +37,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
     <!-- Subscription form -->
     <div class="div8">
-      <form id="subscribeForm" action="http://localhost:4321/api/subscribe" method="POST" class="subscribe-form">
+      <form id="subscribeForm" action="/api/subscribe" method="POST" class="subscribe-form">
         <input type="email" name="email" placeholder="Enter your e-mail" aria-label="Email Input" required />
         <button type="submit" aria-label="Notify me when launched">Notify Me</button>
         <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response" />
