@@ -25,8 +25,19 @@ export async function handler(event) {
         return { statusCode: 405, body: 'Method Not Allowed' };
     }
 
-    // Parse the form data
-    const { email } = JSON.parse(event.body);
+    let email;
+    try {
+        // Attempt to parse the request body
+        const body = JSON.parse(event.body);
+        email = body.email;
+        console.log("Parsed email:", email); // Log parsed email to check if it's received correctly
+    } catch (error) {
+        console.error('Error parsing JSON:', error);
+        return {
+            statusCode: 400,
+            body: 'Invalid JSON format in request body.',
+        };
+    }
 
     // Append email to CSV file in /tmp
     try {
