@@ -8,7 +8,7 @@
 
 [build.environment]
   EMAIL_USER = "oneplu12@gmail.com"             # Email environment variable
-  EMAIL_PASS = "fegu hgmx mbgs yykn"            # Password environment variable
+  EMAIL_PASS = "nkvk tdgd wfeh yazv"            # Password environment variable
   RECAPTCHA_SECRET_KEY = "YOUR_RECAPTCHA_SECRET_KEY" # Recaptcha secret (if used)
 
 [[redirects]]
