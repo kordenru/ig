@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import nodemailer from 'nodemailer';
+import axios from 'axios';
 
 // Path to the CSV file in Netlify function environment
 const filePath = path.resolve('/tmp/subscribers.csv');
@@ -19,12 +20,55 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// Function to verify reCAPTCHA
+async function verifyRecaptcha(token) {
+  const secretKey = process.env.RECAPTCHA_SECRET_KEY; // Access the secret key from environment variables
+
+  try {
+    const response = await axios.post(
+      'https://www.google.com/recaptcha/api/siteverify', null, {
+        params: {
+          secret: secretKey,
+          response: token,
+        },
+      }
+    );
+    return response.data.success;
+  } catch (error) {
+    console.error('Error verifying reCAPTCHA:', error);
+    return false;
+  }
+}
+
 export async function handler(event) {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' };
   }
 
-  const { email } = JSON.parse(event.body);
+  let email, recaptchaToken;
+
+  try {
+    // Parse the request body to extract email and reCAPTCHA token
+    const { email: parsedEmail, 'g-recaptcha-response': parsedToken } = JSON.parse(event.body);
+    email = parsedEmail;
+    recaptchaToken = parsedToken;
+
+    if (!email || !recaptchaToken) throw new Error("Missing email or reCAPTCHA token");
+
+    console.log("Parsed email:", email);
+  } catch (error) {
+    console.error('Error parsing request body:', error);
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ success: false, message: 'Invalid request format or missing data.' }),
+    };
+  }
+
+  // Verify reCAPTCHA
+  const isHuman = await verifyRecaptcha(recaptchaToken);
+  if (!isHuman) {
+    return { statusCode: 400, body: JSON.stringify({ success: false, message: 'reCAPTCHA verification failed.' }) };
+  }
 
   try {
     // Append the email to the CSV file in /tmp

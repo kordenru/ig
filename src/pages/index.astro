@@ -1,118 +1,134 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
+import { onMount } from 'astro/client';
 ---
 
-<BaseLayout>
-  <div class="parent">
-    <!-- Logo and Text Block -->
-    <div class="div2">
-      <div class="logo-container">
-        <img src="/assets/icons/ig-logo.svg" alt="Company Logo" class="logo-image" />
-      </div>
-      <div class="text-container">
-        <div class="text-block">
-          <h2>IANA GLUSHACH</h2>
-          <hr class="separator-line" />
-          <p class="b-c-text">Bonsai and Ceramics</p>
-        </div>
-      </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subscribe to Our Launch Updates</title>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <style>
+    /* Basic styling for the form */
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f5f5f5;
+    }
+
+    .subscribe-form {
+      display: flex;
+      flex-direction: column;
+      width: 300px;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+    }
+
+    .subscribe-form input[type="email"] {
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+
+    .subscribe-form button {
+      padding: 10px;
+      font-size: 16px;
+      background-color: #0073e6;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .subscribe-form button:hover {
+      background-color: #005bb5;
+    }
+
+    .message {
+      text-align: center;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+
+    .success-message {
+      color: green;
+    }
+
+    .error-message {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Subscription Form -->
+  <form id="subscribeForm" class="subscribe-form" onsubmit="event.preventDefault(); onSubmit()">
+    <input type="email" name="email" placeholder="Enter your e-mail" required />
+    <button type="submit" class="g-recaptcha"
+            data-sitekey="6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB" 
+            data-callback="onReCaptchaSuccess"
+            data-size="invisible">
+      Notify Me
+    </button>
+    <div id="successMessage" class="message success-message" style="display: none;">
+      Thank you for subscribing! We will notify you when our website launches.
     </div>
-
-    <!-- "We Are Coming Soon" -->
-    <div class="div6">
-      <h2>Our new website is on its way! </h2>
+    <div id="errorMessage" class="message error-message" style="display: none;">
+      An error occurred. Please try again later.
     </div>
+  </form>
 
-    <!-- Tagline -->
-    <div class="div7">
-      <p class="tagline">We’re putting the final touches in place, and we can’t wait to share it with you.<br>
-      In the meantime, visit our <a href="https://www.etsy.com/shop/IGBonsaiCeramics" class="etsy-store-link">Etsy Store.</a>
-      </p>
-    </div>
-
-    <!-- Visit Etsy Store link -->
-    <div class="div7">
-    <p class="tagline">Want updates? Enter your email below!</p>
-    </div>
-
-    <!-- Subscription form -->
-    <div class="div8">
-      <form id="subscribeForm" action="/api/subscribe" method="POST" class="subscribe-form">
-        <input type="email" name="email" placeholder="Enter your e-mail" aria-label="Email Input" required />
-        <button type="submit" aria-label="Notify me when launched">Notify Me</button>
-        <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response" />
-      </form>
-
-      <!-- Success message, hidden by default -->
-      <div id="successMessage" class="success-message" style="display: none;">
-        <h2>Thank you for subscribing!</h2>
-        <p>We will notify you when our website launches.</p>
-      </div>
-
-      <!-- Error message, hidden by default -->
-      <div id="errorMessage" class="error-message" style="display: none;">
-        <h2>An error occurred!</h2>
-        <p>Please try again later.</p>
-      </div>
-    </div>
-
-    <!-- Follow us section -->
-    <div class="div9">
-      <h3>Follow us on</h3>
-    </div>
-    <div class="div10">
-      <div class="social-icons">
-        <a href="https://www.instagram.com/ig_bonsai_ceramics/" target="_blank" aria-label="Instagram">
-          <img src="/assets/icons/insta.png" alt="Instagram" />
-        </a>
-        <a href="https://www.facebook.com/IGbonsaiCeramics/" target="_blank" aria-label="Facebook">
-          <img src="/assets/icons/facebook.png" alt="Facebook" />
-        </a>
-       
-      </div>
-    </div>
-
-    <!-- Footer -->
-    <div class="div13">
-      <footer>
-        2024 &copy; Iana Glushach Bonsai and Ceramics - All Rights Reserved
-      </footer>
-    </div>
-  </div>
-
-  <!-- JavaScript to handle form submission and display messages -->
   <script>
-    document.getElementById('subscribeForm').addEventListener('submit', function (event) {
-      event.preventDefault();
-  
-      // Hide the form and display the success message before the fetch request
-      document.getElementById('subscribeForm').style.display = 'none';
-      document.getElementById('successMessage').style.display = 'block';
-  
-      fetch(event.target.action, {
+    // Trigger reCAPTCHA on form submission
+    function onSubmit() {
+      grecaptcha.execute();
+    }
+
+    // Function called upon successful reCAPTCHA verification
+    function onReCaptchaSuccess(token) {
+      const form = document.getElementById('subscribeForm');
+      const formData = new FormData(form);
+      formData.append('g-recaptcha-response', token);
+
+      fetch('/api/subscribe', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams(new FormData(event.target)),
+        body: formData
       })
-        .then(response => {
-          if (!response.ok) {
-            // If the server responds with an error, show the error message
-            throw new Error('Server error');
-          }
-          return response.text();
-        })
-        .then(() => {
-          // Successfully handled on the server, no further action needed
-        })
-        .catch((error) => {
-          // Show the form again and display an error message
-          document.getElementById('subscribeForm').style.display = 'block';
-          document.getElementById('successMessage').style.display = 'none';
-          document.getElementById('errorMessage').style.display = 'block';
-          console.error('Error:', error.message);
-        });
-    });
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          showSuccessMessage();
+        } else {
+          showErrorMessage(data.message);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        showErrorMessage('An error occurred. Please try again.');
+      });
+    }
+
+    function showSuccessMessage() {
+      document.getElementById('successMessage').style.display = 'block';
+      document.getElementById('errorMessage').style.display = 'none';
+    }
+
+    function showErrorMessage(message) {
+      const errorMessage = document.getElementById('errorMessage');
+      errorMessage.style.display = 'block';
+      errorMessage.textContent = message;
+      document.getElementById('successMessage').style.display = 'none';
+    }
   </script>
-</BaseLayout>
+
+</body>
+</html>
