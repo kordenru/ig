@@ -69,7 +69,7 @@
 .div6 {
     text-align: left; /* Align text to the left */
     width: 100%; /* Ensure no text gets cut off */
-    margin-bottom: 10px; /* Add space between the line and the next text */
+     /* Add space between the line and the next text */
 }
 
 .div6 h1 {
