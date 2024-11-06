@@ -7,6 +7,7 @@
   node_bundler = "esbuild"
 
 [build.environment]
-  EMAIL_USER = "your-email@gmail.com"
-  EMAIL_PASS = "your-email-password"
+  EMAIL_USER = "oneplu12@gmail.com"
+  EMAIL_PASS = "fegu hgmx mbgs yykn"
   RECAPTCHA_SECRET_KEY = "YOUR_RECAPTCHA_SECRET_KEY"
+
