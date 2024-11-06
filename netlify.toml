@@ -1,13 +1,17 @@
 [build]
-  publish = "dist"
-  command = "npm run build"
+  publish = "dist"               # Astro's output directory
+  command = "npm run build"       # Build command for Astro
 
 [functions]
-  directory = "netlify/functions"
-  node_bundler = "esbuild"
+  directory = "netlify/functions" # Location of Netlify functions
+  node_bundler = "esbuild"        # Use esbuild for bundling
 
 [build.environment]
-  EMAIL_USER = "oneplu12@gmail.com"
-  EMAIL_PASS = "fegu hgmx mbgs yykn"
-  RECAPTCHA_SECRET_KEY = "YOUR_RECAPTCHA_SECRET_KEY"
+  EMAIL_USER = "oneplu12@gmail.com"             # Email environment variable
+  EMAIL_PASS = "fegu hgmx mbgs yykn"            # Password environment variable
+  RECAPTCHA_SECRET_KEY = "YOUR_RECAPTCHA_SECRET_KEY" # Recaptcha secret (if used)
 
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
