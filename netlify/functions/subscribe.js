@@ -21,35 +21,63 @@ const transporter = nodemailer.createTransport({
 
 // Netlify function to handle subscription form submission
 export async function handler(event) {
+    console.log("Function triggered. HTTP Method:", event.httpMethod);
+    console.log("Headers:", event.headers);
+    console.log("Raw event body:", event.body); // Log the raw body for troubleshooting
+
     if (event.httpMethod !== 'POST') {
         return { statusCode: 405, body: 'Method Not Allowed' };
     }
 
+    // Initialize email variable
     let email;
+
+    // Parse the request body, handling JSON and form-encoded data
     try {
-        // Attempt to parse the request body
-        const body = JSON.parse(event.body);
-        email = body.email;
-        console.log("Parsed email:", email); // Log parsed email to check if it's received correctly
+        if (event.headers['content-type'] === 'application/json') {
+            // JSON body parsing
+            const body = JSON.parse(event.body);
+            email = body.email;
+        } else if (event.headers['content-type'] === 'application/x-www-form-urlencoded') {
+            // Form-urlencoded parsing
+            const params = new URLSearchParams(event.body);
+            email = params.get('email');
+        } else {
+            throw new Error("Unsupported content type");
+        }
+
+        if (!email) {
+            throw new Error("Email not provided");
+        }
+
+        console.log("Parsed email:", email);
     } catch (error) {
-        console.error('Error parsing JSON:', error);
+        console.error('Error parsing request body:', error);
         return {
             statusCode: 400,
-            body: 'Invalid JSON format in request body.',
+            body: 'Invalid request format or missing email.',
         };
     }
 
     // Append email to CSV file in /tmp
     try {
         fs.appendFileSync(filePath, `${email}\n`);
+        console.log("Email appended successfully.");
     } catch (error) {
         console.error('Error writing to CSV:', error);
         return { statusCode: 500, body: 'Error saving subscription data.' };
     }
 
     // Read all subscribers from CSV for email summary
-    const subscribers = fs.readFileSync(filePath, 'utf-8').split('\n').slice(1).filter(Boolean);
-    const totalSubscribers = subscribers.length;
+    let totalSubscribers;
+    try {
+        const subscribers = fs.readFileSync(filePath, 'utf-8').split('\n').slice(1).filter(Boolean);
+        totalSubscribers = subscribers.length;
+        console.log("Total subscribers:", totalSubscribers);
+    } catch (error) {
+        console.error('Error reading from CSV:', error);
+        return { statusCode: 500, body: 'Error reading subscription data.' };
+    }
 
     // Send email notification to the owner
     const mailOptions = {
@@ -60,7 +88,8 @@ export async function handler(event) {
     };
 
     try {
-        await transporter.sendMail(mailOptions);
+        const emailResponse = await transporter.sendMail(mailOptions);
+        console.log("Email sent successfully:", emailResponse);
     } catch (error) {
         console.error('Error sending email:', error);
         return { statusCode: 500, body: 'Error sending email notification.' };
