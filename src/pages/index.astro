@@ -1,8 +1,17 @@
----
-import BaseLayout from "../layouts/BaseLayout.astro";
----
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iana Glushach Bonsai and Ceramics</title>
 
-<BaseLayout>
+  <!-- Include CookieConsent CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent/3.0.1/cookieconsent.min.css" />
+
+  <!-- Other CSS files -->
+  <link rel="stylesheet" href="/assets/css/main.css">
+</head>
+<body>
   <div class="parent">
     <!-- Logo and Text Block -->
     <div class="div2">
@@ -20,13 +29,13 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
     <!-- "We Are Coming Soon" -->
     <div class="div6">
-      <h2>Our new website is on its way! </h2>
+      <h2>Our new website is on its way!</h2>
     </div>
 
     <!-- Tagline -->
     <div class="div7">
       <p class="tagline">We’re putting the final touches in place, and we can’t wait to share it with you.<br>
-      In the meantime, visit our <a href="https://www.etsy.com/shop/IGBonsaiCeramics"  target="_blank" class="etsy-store-link">Etsy Store.</a>
+      In the meantime, visit our <a href="https://www.etsy.com/shop/IGBonsaiCeramics" class="etsy-store-link">Etsy Store.</a>
       </p>
     </div>
 
@@ -39,7 +48,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     <div class="div8">
       <form id="subscribeForm" action="/api/subscribe" method="POST" class="subscribe-form">
         <input type="email" name="email" placeholder="Enter your e-mail" aria-label="Email Input" required />
-        <button type="submit" class="g-recaptcha" data-sitekey="6Lf-nHcqAAAAALnC28_7N03OgK3kdOhFEw-sVrG9" data-callback="onReCaptchaSuccess" data-size="invisible">Notify Me</button>
+        <button type="submit" class="g-recaptcha" data-sitekey="YOUR_RECAPTCHA_SITE_KEY" data-callback="onReCaptchaSuccess" data-size="invisible">Notify Me</button>
       </form>
 
       <!-- Success message, hidden by default -->
@@ -81,38 +90,34 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   <!-- Include Google reCAPTCHA -->
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
+  <!-- Include CookieConsent JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent/3.0.1/cookieconsent.min.js"></script>
+
+  <!-- Initialize CookieConsent -->
+  <script>
+    window.addEventListener("load", function() {
+      window.cookieconsent.initialise({
+        palette: {
+          popup: { background: "#000" },
+          button: { background: "#f1d600" }
+        },
+        theme: "classic",
+        position: "bottom-right",
+        content: {
+          message: "This website uses cookies to ensure you get the best experience on our website.",
+          dismiss: "Got it!",
+          link: "Learn more",
+          href: "/privacy-policy" // Update with your privacy policy URL
+        }
+      });
+    });
+  </script>
+
   <!-- JavaScript to handle form submission and display messages -->
   <script>
-    // Ensure the function is defined in the global scope
-    window.onReCaptchaSuccess = function onReCaptchaSuccess(token) {
+    function onReCaptchaSuccess(token) {
       const form = document.getElementById('subscribeForm');
-      const formData = new FormData(form);
-      formData.append('g-recaptcha-response', token);
-
-      // Submit the form data via fetch to avoid page reload
-      fetch(form.action, {
-        method: 'POST',
-        body: new URLSearchParams(formData),
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-      })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Server error');
-          }
-          return response.text();
-        })
-        .then(() => {
-          // Show success message and hide the form
-          document.getElementById('subscribeForm').style.display = 'none';
-          document.getElementById('successMessage').style.display = 'block';
-        })
-        .catch((error) => {
-          // Display error message if there's an issue
-          document.getElementById('errorMessage').style.display = 'block';
-          console.error('Error:', error.message);
-        });
+      form.submit(); // Submit the form if reCAPTCHA succeeds
     }
 
     document.getElementById('subscribeForm').addEventListener('submit', function (event) {
@@ -120,4 +125,5 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       grecaptcha.execute(); // Trigger invisible reCAPTCHA
     });
   </script>
-</BaseLayout>
+</body>
+</html>
