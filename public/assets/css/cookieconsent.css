@@ -31,7 +31,7 @@
   --cc-separator-border-color: #C1B299;
 }
 
-/* Body and Consent Modal */
+/* Main Consent Modal and Preferences Modal */
 #cc-main {
   background: var(--cc-bg);
   color: var(--cc-primary-color);
@@ -40,7 +40,18 @@
   line-height: 1.4;
 }
 
-/* Customize Link Appearance */
+/* Consent Modal Title and Description */
+#cc-main .cm__title {
+  color: var(--cc-primary-color);
+  font-size: 1.1em;
+}
+#cc-main .cm__desc {
+  color: var(--cc-secondary-color);
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+
+/* Links */
 #cc-main .cc__link,
 #cc-main a {
   color: var(--cc-link-color);
@@ -52,21 +63,12 @@
   color: var(--cc-primary-color);
 }
 
-/* Customize Title and Description */
-#cc-main .cm__title {
-  color: var(--cc-primary-color);
-  font-size: 1.1em;
-}
-#cc-main .cm__desc {
-  color: var(--cc-secondary-color);
-  font-size: 0.9em;
-}
-
-/* Button Styling */
+/* Buttons */
 #cc-main .cm__btn {
   background: var(--cc-btn-primary-bg);
   color: var(--cc-btn-primary-color);
   border-radius: var(--cc-btn-border-radius);
+  padding: 0.5em 1em;
 }
 #cc-main .cm__btn:hover {
   background: var(--cc-btn-primary-hover-bg);
@@ -79,28 +81,11 @@
   background: var(--cc-btn-secondary-hover-bg);
 }
 
-/* Footer Styling */
+/* Footer */
 #cc-main .cm__footer {
   background: var(--cc-footer-bg);
   color: var(--cc-footer-color);
   border-top: 1px solid var(--cc-separator-border-color);
-}
-
-/* Modal Transition Effects */
-.cc--anim .cm {
-  transition: opacity var(--cc-modal-transition-duration) ease, transform var(--cc-modal-transition-duration) ease;
-}
-.show--consent .cc--anim .cm {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Customize Toggle Appearance */
-#cc-main .section__toggle {
-  background: var(--cc-toggle-on-bg);
-}
-#cc-main .toggle__icon-circle {
-  background: var(--cc-toggle-on-knob-bg);
 }
 
 /* Preferences Modal Styling */
@@ -111,7 +96,48 @@
 }
 #cc-main .pm__title {
   color: var(--cc-primary-color);
+  font-size: 1.2em;
+  margin-bottom: 0.5em;
 }
-#cc-main .pm__btn--secondary {
-  background: var(--cc-btn-secondary-bg);
+#cc-main .pm__desc {
+  color: var(--cc-secondary-color);
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+
+/* Section Titles and Badges */
+#cc-main .pm__section-title {
+  font-size: 1em;
+  color: var(--cc-primary-color);
+  margin-bottom: 0.5em;
+}
+#cc-main .pm__badge {
+  background: var(--cc-footer-bg);
+  color: var(--cc-secondary-color);
+  font-size: 0.8em;
+  padding: 0.3em 0.6em;
+  border-radius: 4px;
+}
+
+/* Toggle Switch */
+#cc-main .section__toggle {
+  background: var(--cc-toggle-off-bg);
+}
+#cc-main .section__toggle:checked {
+  background: var(--cc-toggle-on-bg);
+}
+#cc-main .toggle__icon-circle {
+  background: var(--cc-toggle-on-knob-bg);
+}
+
+/* Adjust scrollbars for consistency */
+#cc-main .pm__body {
+  scrollbar-width: thin;
+}
+#cc-main ::-webkit-scrollbar {
+  width: 8px;
+}
+#cc-main ::-webkit-scrollbar-thumb {
+  background-color: var(--cc-toggle-off-bg);
+  border-radius: 4px;
 }
