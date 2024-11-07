@@ -12,11 +12,13 @@
   },
   "dependencies": {
     "@astrojs/netlify": "^5.5.4",
+    "@jop-software/astro-cookieconsent": "^3.0.1",
     "astro": "^4.16.6",
     "axios": "^0.21.4",
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
     "express": "^4.21.0",
-    "nodemailer": "^6.9.15"
+    "nodemailer": "^6.9.15",
+    "vanilla-cookieconsent": "^3.0.1"
   }
 }

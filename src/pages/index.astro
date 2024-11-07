@@ -32,7 +32,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
     <!-- Visit Etsy Store link -->
     <div class="div7">
-    <p class="tagline">Want updates? Enter your email below!</p>
+      <p class="tagline">Want updates? Enter your email below!</p>
     </div>
 
     <!-- Subscription form -->
@@ -81,11 +81,32 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     </div>
   </div>
 
-  <!-- Include the Google reCAPTCHA script -->
+  <!-- Include Google reCAPTCHA -->
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
-  <!-- JavaScript to handle form submission with reCAPTCHA -->
+  <!-- Include CookieConsent CSS and JavaScript from CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent/3.0.1/cookieconsent.min.css" integrity="sha512-YRpr2O93/J+i4pgL2ywd54AZpgRZRsmNTd9DbryJzKbGpP5KT0VWyxSpbfF2KP4K7E96A9o31h/Zox2C4idKQA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent/3.0.1/cookieconsent.min.js" integrity="sha512-PL53Wlf5l5ZGHL65qZL7aIMvAYqurA3yb1Krtbi5QxqSYRePhXzBl/d9MQab7V8KaL5ChUbw/An5ng2XPCvOaA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <!-- Initialize CookieConsent -->
   <script>
+    window.addEventListener("load", function () {
+      window.cookieconsent.initialise({
+        palette: {
+          popup: { background: "#000" },
+          button: { background: "#f1d600" }
+        },
+        theme: "classic",
+        position: "bottom-right",
+        content: {
+          message: "This website uses cookies to ensure you get the best experience on our website.",
+          dismiss: "Got it!",
+          link: "Learn more",
+          href: "/privacy-policy" // Link to your privacy policy page
+        }
+      });
+    });
+
     // Trigger reCAPTCHA when form is submitted
     document.getElementById('subscribeForm').addEventListener('submit', function(event) {
       event.preventDefault();

@@ -2,6 +2,8 @@ import { defineConfig } from 'astro/config';
 
 import netlify from '@astrojs/netlify';
 
+import jopSoftwarecookieconsent from '@jop-software/astro-cookieconsent';
+
 export default defineConfig({
   // Path to source files
   srcDir: './src',
@@ -13,5 +15,6 @@ export default defineConfig({
   outDir: './dist',
 
   output: 'server',
-  adapter: netlify()
+  adapter: netlify(),
+  integrations: [jopSoftwarecookieconsent()]
 });
