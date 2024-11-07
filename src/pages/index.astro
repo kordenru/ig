@@ -39,7 +39,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     <div class="div8">
       <form id="subscribeForm" action="/api/subscribe" method="POST" class="subscribe-form">
         <input type="email" name="email" placeholder="Enter your e-mail" aria-label="Email Input" required />
-        <button type="submit" class="g-recaptcha" data-sitekey="6Lf-nHcqAAAAALnC28_7N03OgK3kdOhFEw-sVrG9" data-callback="onReCaptchaSuccess" data-size="invisible">Notify Me</button>
+        <button type="submit" class="g-recaptcha" data-sitekey="YOUR_SITE_KEY" data-callback="onReCaptchaSuccess" data-size="invisible">Notify Me</button>
       </form>
 
       <!-- Success message, hidden by default -->
@@ -83,9 +83,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
   <!-- JavaScript to handle form submission and display messages -->
   <script>
-    function onReCaptchaSuccess(token) {
+    // Ensure the function is defined in the global scope
+    window.onReCaptchaSuccess = function onReCaptchaSuccess(token) {
       const form = document.getElementById('subscribeForm');
       const formData = new FormData(form);
+      formData.append('g-recaptcha-response', token);
 
       // Submit the form data via fetch to avoid page reload
       fetch(form.action, {
