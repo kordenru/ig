@@ -82,47 +82,84 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     <!-- Include Google reCAPTCHA -->
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
-    <!-- CookieConsent Module Integration and Configuration -->
-    <script type="module">
-      import CookieConsent from 'https://cdn.jsdelivr.net/npm/@orestbida/cookieconsent@3.0.1/dist/cookieconsent.module.min.js';
+<!-- Cookie Consent UMD Script -->
+  <script src="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.0.1/dist/cookieconsent.umd.js"></script>
 
-      const cc = new CookieConsent();
-      cc.run({
-        current_lang: 'en',
-        autoclear_cookies: true,
-        languages: {
-          en: {
-            consent_modal: {
-              title: 'We use cookies!',
-              description: 'This website uses cookies to ensure you get the best experience. <button type="button" data-cc="c-settings">Let me choose</button>',
-              primary_btn: {
-                text: 'Accept all',
-                role: 'accept_all'
-              },
-              secondary_btn: {
-                text: 'Reject all',
-                role: 'accept_necessary'
-              }
+  <!-- CookieConsent Configuration Script -->
+  <script>
+    document.documentElement.classList.add('cc--darkmode'); // Enable dark mode
+
+    CookieConsent.run({
+        guiOptions: {
+            consentModal: {
+                layout: "box",
+                position: "bottom right",
+                equalWeightButtons: true,
+                flipButtons: false
             },
-            settings_modal: {
-              title: 'Cookie preferences',
-              blocks: [
-                {
-                  title: 'Necessary cookies',
-                  description: 'These cookies are essential for the website to function correctly.',
-                  toggle: { value: 'necessary', enabled: true, readonly: true }
-                },
-                {
-                  title: 'Analytics cookies',
-                  description: 'These cookies help us understand how visitors interact with our website.',
-                  toggle: { value: 'analytics', enabled: false, readonly: false }
-                }
-              ]
+            preferencesModal: {
+                layout: "box",
+                position: "right",
+                equalWeightButtons: true,
+                flipButtons: false
             }
-          }
+        },
+        categories: {
+            necessary: { readOnly: true },
+            functionality: {},
+            analytics: {}
+        },
+        language: {
+            default: "en",
+            autoDetect: "browser",
+            translations: {
+                en: {
+                    consentModal: {
+                        title: "Hello traveller, it's cookie time!",
+                        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.",
+                        acceptAllBtn: "Accept all",
+                        acceptNecessaryBtn: "Reject all",
+                        showPreferencesBtn: "Manage preferences",
+                        footer: "<a href=\"#link\">Privacy Policy</a> <a href=\"#link\">Terms and conditions</a>"
+                    },
+                    preferencesModal: {
+                        title: "Consent Preferences Center",
+                        acceptAllBtn: "Accept all",
+                        acceptNecessaryBtn: "Reject all",
+                        savePreferencesBtn: "Save preferences",
+                        closeIconLabel: "Close modal",
+                        serviceCounterLabel: "Service|Services",
+                        sections: [
+                            {
+                                title: "Cookie Usage",
+                                description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+                            },
+                            {
+                                title: "Strictly Necessary Cookies <span class=\"pm__badge\">Always Enabled</span>",
+                                description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+                                linkedCategory: "necessary"
+                            },
+                            {
+                                title: "Functionality Cookies",
+                                description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+                                linkedCategory: "functionality"
+                            },
+                            {
+                                title: "Analytics Cookies",
+                                description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+                                linkedCategory: "analytics"
+                            },
+                            {
+                                title: "More information",
+                                description: "For any query in relation to my policy on cookies and your choices, please <a class=\"cc__link\" href=\"#yourdomain.com\">contact me</a>."
+                            }
+                        ]
+                    }
+                }
+            }
         }
-      });
-    </script>
+    });
+  </script>
 
     <!-- JavaScript to handle form submission and display messages -->
     <script>
