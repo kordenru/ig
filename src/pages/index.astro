@@ -1,4 +1,3 @@
----
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
@@ -83,10 +82,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
   <!-- JavaScript to handle form submission and display messages -->
   <script>
-    function onReCaptchaSuccess(token) {
-      const form = document.getElementById('subscribeForm');
-      form.submit(); // Submit the form if reCAPTCHA succeeds
-    }
+    // Define `onReCaptchaSuccess` as a global function
+    window.onReCaptchaSuccess = function(token) {
+      // Submit the form programmatically
+      document.getElementById('subscribeForm').submit();
+    };
 
     document.getElementById('subscribeForm').addEventListener('submit', function (event) {
       event.preventDefault();
