@@ -1,0 +1,117 @@
+/* custom-cookieconsent.css */
+
+/* Set custom CSS variables based on your site's design */
+:root {
+  --cc-font-family: 'Roboto', sans-serif;
+  --cc-modal-border-radius: 8px;
+  --cc-btn-border-radius: 6px;
+  --cc-modal-transition-duration: 0.25s;
+  --cc-z-index: 2147483647;
+
+  /* Background and Text Colors */
+  --cc-bg: #F5F5F5; /* Light background */
+  --cc-primary-color: #4E3B2A; /* Dark brown text */
+  --cc-secondary-color: #8B7E6B; /* Softer brown for secondary text */
+  
+  /* Button Colors */
+  --cc-btn-primary-bg: #4E3B2A; /* Dark brown button background */
+  --cc-btn-primary-color: #FFFFFF; /* White button text */
+  --cc-btn-primary-hover-bg: #3C2C21; /* Darker brown on hover */
+  
+  --cc-btn-secondary-bg: #E3DED8; /* Light grey secondary button background */
+  --cc-btn-secondary-color: #4E3B2A; /* Dark brown text on secondary button */
+  --cc-btn-secondary-hover-bg: #C1B299; /* Beige on hover */
+
+  /* Link Colors */
+  --cc-link-color: #4E3B2A;
+
+  /* Footer and Border Colors */
+  --cc-footer-bg: #E3DED8; /* Light grey footer background */
+  --cc-footer-color: #8B7E6B;
+  --cc-separator-border-color: #C1B299;
+}
+
+/* Body and Consent Modal */
+#cc-main {
+  background: var(--cc-bg);
+  color: var(--cc-primary-color);
+  font-family: var(--cc-font-family);
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+/* Customize Link Appearance */
+#cc-main .cc__link,
+#cc-main a {
+  color: var(--cc-link-color);
+  font-weight: 600;
+  transition: color 0.25s ease;
+}
+#cc-main .cc__link:hover,
+#cc-main a:hover {
+  color: var(--cc-primary-color);
+}
+
+/* Customize Title and Description */
+#cc-main .cm__title {
+  color: var(--cc-primary-color);
+  font-size: 1.1em;
+}
+#cc-main .cm__desc {
+  color: var(--cc-secondary-color);
+  font-size: 0.9em;
+}
+
+/* Button Styling */
+#cc-main .cm__btn {
+  background: var(--cc-btn-primary-bg);
+  color: var(--cc-btn-primary-color);
+  border-radius: var(--cc-btn-border-radius);
+}
+#cc-main .cm__btn:hover {
+  background: var(--cc-btn-primary-hover-bg);
+}
+#cc-main .cm__btn--secondary {
+  background: var(--cc-btn-secondary-bg);
+  color: var(--cc-btn-secondary-color);
+}
+#cc-main .cm__btn--secondary:hover {
+  background: var(--cc-btn-secondary-hover-bg);
+}
+
+/* Footer Styling */
+#cc-main .cm__footer {
+  background: var(--cc-footer-bg);
+  color: var(--cc-footer-color);
+  border-top: 1px solid var(--cc-separator-border-color);
+}
+
+/* Modal Transition Effects */
+.cc--anim .cm {
+  transition: opacity var(--cc-modal-transition-duration) ease, transform var(--cc-modal-transition-duration) ease;
+}
+.show--consent .cc--anim .cm {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Customize Toggle Appearance */
+#cc-main .section__toggle {
+  background: var(--cc-toggle-on-bg);
+}
+#cc-main .toggle__icon-circle {
+  background: var(--cc-toggle-on-knob-bg);
+}
+
+/* Preferences Modal Styling */
+#cc-main .pm {
+  background: var(--cc-bg);
+  color: var(--cc-primary-color);
+  border-radius: var(--cc-modal-border-radius);
+}
+#cc-main .pm__title {
+  color: var(--cc-primary-color);
+}
+#cc-main .pm__btn--secondary {
+  background: var(--cc-btn-secondary-bg);
+}
