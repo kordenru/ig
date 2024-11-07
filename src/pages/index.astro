@@ -126,12 +126,12 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     </script>
     <!-- CookieConsent Configuration Script -->
    <script type="module">
-  import CookieConsent from 'https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.0.1/dist/cookieconsent.module.min.js';
+  import CookieConsent from 'https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.0.1/dist/cookieconsent.umd.js';
 
-  const cc = new CookieConsent({
+  const cc = new CookieConsent();
+  cc.run({
     current_lang: 'en',
     autoclear_cookies: true,
-    theme_css: 'https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.0.1/dist/cookieconsent.css',
     languages: {
       en: {
         consent_modal: {
@@ -148,44 +148,23 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         },
         settings_modal: {
           title: 'Cookie preferences',
-          save_settings_btn: 'Save settings',
-          accept_all_btn: 'Accept all',
-          reject_all_btn: 'Reject all',
           blocks: [
             {
               title: 'Necessary cookies',
               description: 'These cookies are essential for the website to function correctly.',
-              toggle: {
-                value: 'necessary',
-                enabled: true,
-                readonly: true
-              }
+              toggle: { value: 'necessary', enabled: true, readonly: true }
             },
             {
               title: 'Analytics cookies',
               description: 'These cookies help us understand how visitors interact with our website.',
-              toggle: {
-                value: 'analytics',
-                enabled: false,
-                readonly: false
-              }
-            },
-            {
-              title: 'Marketing cookies',
-              description: 'These cookies are used for marketing purposes.',
-              toggle: {
-                value: 'marketing',
-                enabled: false,
-                readonly: false
-              }
+              toggle: { value: 'analytics', enabled: false, readonly: false }
             }
           ]
         }
       }
     }
   });
-
-  cc.run();
 </script>
+
   </body>
 </BaseLayout>
