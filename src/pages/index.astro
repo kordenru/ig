@@ -3,145 +3,127 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
 <BaseLayout>
-  <div class="parent">
-    <!-- Logo and Text Block -->
-    <div class="div2">
-      <div class="logo-container">
-        <img src="/assets/icons/ig-logo.svg" alt="Company Logo" class="logo-image" />
-      </div>
-      <div class="text-container">
-        <div class="text-block">
-          <h2>IANA GLUSHACH</h2>
-          <hr class="separator-line" />
-          <p class="b-c-text">Bonsai and Ceramics</p>
+  <head>
+    <!-- CookieConsent CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.0.1/dist/cookieconsent.css">
+  </head>
+
+  <body>
+    <div class="parent">
+      <!-- Logo and Text Block -->
+      <div class="div2">
+        <div class="logo-container">
+          <img src="/assets/icons/ig-logo.svg" alt="Company Logo" class="logo-image" />
+        </div>
+        <div class="text-container">
+          <div class="text-block">
+            <h2>IANA GLUSHACH</h2>
+            <hr class="separator-line" />
+            <p class="b-c-text">Bonsai and Ceramics</p>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- "We Are Coming Soon" -->
-    <div class="div6">
-      <h2>Our new website is on its way!</h2>
-    </div>
-
-    <!-- Tagline -->
-    <div class="div7">
-      <p class="tagline">We’re putting the final touches in place, and we can’t wait to share it with you.<br>
-        In the meantime, visit our <a href="https://www.etsy.com/shop/IGBonsaiCeramics" target="_blank" class="etsy-store-link">Etsy Store.</a>
-      </p>
-    </div>
-
-    <!-- Visit Etsy Store link -->
-    <div class="div7">
-      <p class="tagline">Want updates? Enter your email below!</p>
-    </div>
-
-    <!-- Subscription form -->
-    <div class="div8">
-      <form id="subscribeForm" action="/api/subscribe" method="POST" class="subscribe-form">
-        <input type="email" name="email" placeholder="Enter your e-mail" aria-label="Email Input" required />
-        <button type="submit" class="g-recaptcha" data-sitekey="6Lf-nHcqAAAAALnC28_7N03OgK3kdOhFEw-sVrG9" data-callback="onReCaptchaSuccess" data-size="invisible">Notify Me</button>
-      </form>
-
-      <!-- Success message, hidden by default -->
-      <div id="successMessage" class="success-message" style="display: none;">
-        <h2>Thank you for subscribing!</h2>
-        <p>We will notify you when our website launches.</p>
+      <!-- "We Are Coming Soon" -->
+      <div class="div6">
+        <h2>Our new website is on its way!</h2>
       </div>
 
-      <!-- Error message, hidden by default -->
-      <div id="errorMessage" class="error-message" style="display: none;">
-        <h2>An error occurred!</h2>
-        <p>Please try again later.</p>
+      <!-- Tagline -->
+      <div class="div7">
+        <p class="tagline">We’re putting the final touches in place, and we can’t wait to share it with you.<br>
+          In the meantime, visit our <a href="https://www.etsy.com/shop/IGBonsaiCeramics" target="_blank" class="etsy-store-link">Etsy Store.</a>
+        </p>
+      </div>
+
+      <!-- Visit Etsy Store link -->
+      <div class="div7">
+        <p class="tagline">Want updates? Enter your email below!</p>
+      </div>
+
+      <!-- Subscription form -->
+      <div class="div8">
+        <form id="subscribeForm" action="/api/subscribe" method="POST" class="subscribe-form">
+          <input type="email" name="email" placeholder="Enter your e-mail" aria-label="Email Input" required />
+          <button type="submit" class="g-recaptcha" data-sitekey="6Lf-nHcqAAAAALnC28_7N03OgK3kdOhFEw-sVrG9" data-callback="onReCaptchaSuccess" data-size="invisible">Notify Me</button>
+        </form>
+
+        <!-- Success message, hidden by default -->
+        <div id="successMessage" class="success-message" style="display: none;">
+          <h2>Thank you for subscribing!</h2>
+          <p>We will notify you when our website launches.</p>
+        </div>
+
+        <!-- Error message, hidden by default -->
+        <div id="errorMessage" class="error-message" style="display: none;">
+          <h2>An error occurred!</h2>
+          <p>Please try again later.</p>
+        </div>
+      </div>
+
+      <!-- Follow us section -->
+      <div class="div9">
+        <h3>Follow us on</h3>
+      </div>
+      <div class="div10">
+        <div class="social-icons">
+          <a href="https://www.instagram.com/ig_bonsai_ceramics/" target="_blank" aria-label="Instagram">
+            <img src="/assets/icons/insta.png" alt="Instagram" />
+          </a>
+          <a href="https://www.facebook.com/IGbonsaiCeramics/" target="_blank" aria-label="Facebook">
+            <img src="/assets/icons/facebook.png" alt="Facebook" />
+          </a>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="div13">
+        <footer>
+          2024 &copy; Iana Glushach Bonsai and Ceramics - All Rights Reserved
+        </footer>
       </div>
     </div>
 
-    <!-- Follow us section -->
-    <div class="div9">
-      <h3>Follow us on</h3>
-    </div>
-    <div class="div10">
-      <div class="social-icons">
-        <a href="https://www.instagram.com/ig_bonsai_ceramics/" target="_blank" aria-label="Instagram">
-          <img src="/assets/icons/insta.png" alt="Instagram" />
-        </a>
-        <a href="https://www.facebook.com/IGbonsaiCeramics/" target="_blank" aria-label="Facebook">
-          <img src="/assets/icons/facebook.png" alt="Facebook" />
-        </a>
-      </div>
-    </div>
+    <!-- Include Google reCAPTCHA -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
-    <!-- Footer -->
-    <div class="div13">
-      <footer>
-        2024 &copy; Iana Glushach Bonsai and Ceramics - All Rights Reserved
-      </footer>
-    </div>
-  </div>
+    <!-- CookieConsent Configuration Script -->
+    <script type="module" src="/public/cookieconsent-config.js"></script> <!-- Adjust the path as needed -->
 
-  <!-- Include Google reCAPTCHA -->
-  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <!-- JavaScript to handle form submission and display messages -->
+    <script>
+      window.onReCaptchaSuccess = function onReCaptchaSuccess(token) {
+        const form = document.getElementById('subscribeForm');
+        const formData = new FormData(form);
+        formData.append('g-recaptcha-response', token);
 
-  <!-- Include CookieConsent CSS and JavaScript from CDN -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent/3.0.1/cookieconsent.min.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent/3.0.1/cookieconsent.min.js"></script>
+        fetch(form.action, {
+          method: 'POST',
+          body: new URLSearchParams(formData),
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Server error');
+            }
+            return response.text();
+          })
+          .then(() => {
+            document.getElementById('subscribeForm').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'block';
+          })
+          .catch((error) => {
+            document.getElementById('errorMessage').style.display = 'block';
+            console.error('Error:', error.message);
+          });
+      }
 
-  <!-- Initialize CookieConsent -->
-  <script>
-    window.addEventListener("load", function () {
-      window.cookieconsent.initialise({
-        palette: {
-          popup: { background: "#000" },
-          button: { background: "#f1d600" }
-        },
-        theme: "classic",
-        position: "bottom-right",
-        content: {
-          message: "This website uses cookies to ensure you get the best experience on our website.",
-          dismiss: "Got it!",
-          link: "Learn more",
-          href: "/privacy-policy" // Update with your privacy policy URL
-        }
+      document.getElementById('subscribeForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        grecaptcha.execute();
       });
-    });
-  </script>
-
-  <!-- JavaScript to handle form submission and display messages -->
-  <script>
-    // Ensure the function is defined in the global scope
-    window.onReCaptchaSuccess = function onReCaptchaSuccess(token) {
-      const form = document.getElementById('subscribeForm');
-      const formData = new FormData(form);
-      formData.append('g-recaptcha-response', token);
-
-      // Submit the form data via fetch to avoid page reload
-      fetch(form.action, {
-        method: 'POST',
-        body: new URLSearchParams(formData),
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-      })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Server error');
-          }
-          return response.text();
-        })
-        .then(() => {
-          // Show success message and hide the form
-          document.getElementById('subscribeForm').style.display = 'none';
-          document.getElementById('successMessage').style.display = 'block';
-        })
-        .catch((error) => {
-          // Display error message if there's an issue
-          document.getElementById('errorMessage').style.display = 'block';
-          console.error('Error:', error.message);
-        });
-    }
-
-    document.getElementById('subscribeForm').addEventListener('submit', function (event) {
-      event.preventDefault();
-      grecaptcha.execute(); // Trigger invisible reCAPTCHA
-    });
-  </script>
+    </script>
+  </body>
 </BaseLayout>
