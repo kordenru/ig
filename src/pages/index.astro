@@ -20,14 +20,13 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
     <!-- "We Are Coming Soon" -->
     <div class="div6">
-      <h2>Our new website is on its way!</h2>
+      <h2>Our new website is on its way! </h2>
     </div>
 
     <!-- Tagline -->
     <div class="div7">
-      <p class="tagline">
-        We’re putting the final touches in place, and we can’t wait to share it with you.<br />
-        In the meantime, visit our <a href="https://www.etsy.com/shop/IGBonsaiCeramics" class="etsy-store-link">Etsy Store.</a>
+      <p class="tagline">We’re putting the final touches in place, and we can’t wait to share it with you.<br>
+      In the meantime, visit our <a href="https://www.etsy.com/shop/IGBonsaiCeramics" class="etsy-store-link">Etsy Store.</a>
       </p>
     </div>
 
@@ -40,10 +39,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     <div class="div8">
       <form id="subscribeForm" action="/api/subscribe" method="POST" class="subscribe-form">
         <input type="email" name="email" placeholder="Enter your e-mail" aria-label="Email Input" required />
-        <button type="submit" class="g-recaptcha" data-sitekey="6LczkncqAAAAABXzO799uDsH-3F-IYQJ3hyx733J" data-callback="onReCaptchaSuccess" data-size="invisible">
-          Notify Me
-        </button>
-        <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response" />
+        <button type="submit" aria-label="Notify me when launched">Notify Me</button>
       </form>
 
       <!-- Success message, hidden by default -->
@@ -82,19 +78,31 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     </div>
   </div>
 
-  <!-- Include Google reCAPTCHA -->
-  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-
-  <!-- reCAPTCHA and form submission script -->
   <script>
     document.getElementById('subscribeForm').addEventListener('submit', function(event) {
-      event.preventDefault();
-      grecaptcha.execute(); // Trigger reCAPTCHA
-    });
+      event.preventDefault(); // Prevent default form submission
 
-    function onReCaptchaSuccess(token) {
-      document.getElementById('g-recaptcha-response').value = token;
-      document.getElementById('subscribeForm').submit(); // Submit the form after setting the token
-    }
+      const form = document.getElementById('subscribeForm');
+      const formData = new FormData(form);
+
+      fetch(form.action, {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => {
+        if (!response.ok) throw new Error('Server error');
+        return response.text();
+      })
+      .then(() => {
+        document.getElementById('subscribeForm').style.display = 'none';
+        document.getElementById('successMessage').style.display = 'block';
+      })
+      .catch(error => {
+        document.getElementById('subscribeForm').style.display = 'block';
+        document.getElementById('successMessage').style.display = 'none';
+        document.getElementById('errorMessage').style.display = 'block';
+        console.error('Error:', error.message);
+      });
+    });
   </script>
 </BaseLayout>
