@@ -14,18 +14,16 @@ if (!fs.existsSync(filePath)) {
 const transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
-        user: process.env.EMAIL_USER, // Your email address
-        pass: process.env.EMAIL_PASS, // Your email password or app-specific password
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
     },
 });
 
-// Netlify function to handle subscription form submission
 export async function handler(event) {
     if (event.httpMethod !== 'POST') {
         return { statusCode: 405, body: 'Method Not Allowed' };
     }
 
-    // Parse the form data from application/x-www-form-urlencoded format
     const params = new URLSearchParams(event.body);
     const email = params.get('email');
 
@@ -36,7 +34,7 @@ export async function handler(event) {
         };
     }
 
-    // Append email to CSV file in /tmp
+    // Append email to CSV
     try {
         fs.appendFileSync(filePath, `${email}\n`);
     } catch (error) {
@@ -44,16 +42,14 @@ export async function handler(event) {
         return { statusCode: 500, body: 'Error saving subscription data.' };
     }
 
-    // Read all subscribers from CSV for email summary
+    // Notify the owner
     const subscribers = fs.readFileSync(filePath, 'utf-8').split('\n').slice(1).filter(Boolean);
     const totalSubscribers = subscribers.length;
-
-    // Send email notification to the owner
     const mailOptions = {
         from: process.env.EMAIL_USER,
         to: process.env.EMAIL_USER,
         subject: 'New Subscriber Notification',
-        text: `You have a new subscriber: ${email}\n\nTotal subscribers: ${totalSubscribers}`,
+        text: `New subscriber: ${email}\nTotal subscribers: ${totalSubscribers}`,
     };
 
     try {
@@ -63,7 +59,6 @@ export async function handler(event) {
         return { statusCode: 500, body: 'Error sending email notification.' };
     }
 
-    // Success response
     return {
         statusCode: 200,
         headers: { 'Content-Type': 'text/html' },

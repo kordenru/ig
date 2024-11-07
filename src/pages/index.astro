@@ -32,15 +32,14 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
     <!-- Visit Etsy Store link -->
     <div class="div7">
-    <p class="tagline">Want updates? Enter your email below!</p>
+      <p class="tagline">Want updates? Enter your email below!</p>
     </div>
 
     <!-- Subscription form -->
     <div class="div8">
       <form id="subscribeForm" action="/api/subscribe" method="POST" class="subscribe-form">
         <input type="email" name="email" placeholder="Enter your e-mail" aria-label="Email Input" required />
-        <button type="submit" aria-label="Notify me when launched">Notify Me</button>
-        <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response" />
+        <button type="submit" class="g-recaptcha" data-sitekey="6LczkncqAAAAABXzO799uDsH-3F-IYQJ3hyx733J" data-callback="onReCaptchaSuccess" data-size="invisible">Notify Me</button>
       </form>
 
       <!-- Success message, hidden by default -->
@@ -68,7 +67,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         <a href="https://www.facebook.com/IGbonsaiCeramics/" target="_blank" aria-label="Facebook">
           <img src="/assets/icons/facebook.png" alt="Facebook" />
         </a>
-       
       </div>
     </div>
 
@@ -80,39 +78,19 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     </div>
   </div>
 
+  <!-- Include Google reCAPTCHA -->
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
   <!-- JavaScript to handle form submission and display messages -->
   <script>
+    function onReCaptchaSuccess(token) {
+      const form = document.getElementById('subscribeForm');
+      form.submit(); // Submit the form if reCAPTCHA succeeds
+    }
+
     document.getElementById('subscribeForm').addEventListener('submit', function (event) {
       event.preventDefault();
-  
-      // Hide the form and display the success message before the fetch request
-      document.getElementById('subscribeForm').style.display = 'none';
-      document.getElementById('successMessage').style.display = 'block';
-  
-      fetch(event.target.action, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams(new FormData(event.target)),
-      })
-        .then(response => {
-          if (!response.ok) {
-            // If the server responds with an error, show the error message
-            throw new Error('Server error');
-          }
-          return response.text();
-        })
-        .then(() => {
-          // Successfully handled on the server, no further action needed
-        })
-        .catch((error) => {
-          // Show the form again and display an error message
-          document.getElementById('subscribeForm').style.display = 'block';
-          document.getElementById('successMessage').style.display = 'none';
-          document.getElementById('errorMessage').style.display = 'block';
-          console.error('Error:', error.message);
-        });
+      grecaptcha.execute(); // Trigger invisible reCAPTCHA
     });
   </script>
 </BaseLayout>

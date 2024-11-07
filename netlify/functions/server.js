@@ -2,70 +2,72 @@ import fs from 'fs';
 import path from 'path';
 import nodemailer from 'nodemailer';
 
-// Path to the CSV file in Netlify function environment
-const filePath = path.resolve('/tmp/subscribers.csv');
+// Define the path to the CSV file in the server environment
+const filePath = path.resolve('/tmp/subscribers.csv'); // Use /tmp for serverless environments
 
-// Ensure the CSV file exists in /tmp directory
+// Ensure the CSV file exists in /tmp
 if (!fs.existsSync(filePath)) {
-  fs.writeFileSync(filePath, 'email\n');
+    fs.writeFileSync(filePath, 'email\n'); // Create CSV file with header
 }
 
 // Configure email transporter (use environment variables for sensitive info)
 const transporter = nodemailer.createTransport({
-  service: 'Gmail',
-  auth: {
-    user: process.env.EMAIL_USER, // Environment variable for email
-    pass: process.env.EMAIL_PASS, // Environment variable for password
-  },
+    service: 'Gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+    },
 });
 
 export async function handler(event) {
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
-  }
+    if (event.httpMethod !== 'POST') {
+        return { statusCode: 405, body: 'Method Not Allowed' };
+    }
 
-  const { email } = JSON.parse(event.body);
+    // Parse form data (URL-encoded)
+    const params = new URLSearchParams(event.body);
+    const email = params.get('email');
 
-  try {
-    // Append the email to the CSV file in /tmp
-    fs.appendFileSync(filePath, `${email}\n`);
+    if (!email) {
+        return {
+            statusCode: 400,
+            body: 'Email is required.',
+        };
+    }
 
-    // Read all subscribers
+    // Append email to CSV file in /tmp
+    try {
+        fs.appendFileSync(filePath, `${email}\n`);
+    } catch (error) {
+        console.error('Error writing to CSV:', error);
+        return { statusCode: 500, body: 'Error saving subscription data.' };
+    }
+
+    // Notify the site owner of the new subscriber
     const subscribers = fs.readFileSync(filePath, 'utf-8').split('\n').slice(1).filter(Boolean);
     const totalSubscribers = subscribers.length;
 
-    // Send an email notification to the owner
     const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: process.env.EMAIL_USER, // Owner's email
-      subject: 'New Subscriber Notification',
-      text: `You have a new subscriber: ${email}\n\nTotal subscribers: ${totalSubscribers}`,
+        from: process.env.EMAIL_USER,
+        to: process.env.EMAIL_USER,
+        subject: 'New Subscriber Notification',
+        text: `You have a new subscriber: ${email}\n\nTotal subscribers: ${totalSubscribers}`,
     };
 
-    // Log before sending the email
-    console.log("Attempting to send email...");
-    const emailResponse = await transporter.sendMail(mailOptions);
-    console.log("Email sent:", emailResponse);
+    try {
+        await transporter.sendMail(mailOptions);
+    } catch (error) {
+        console.error('Error sending email:', error);
+        return { statusCode: 500, body: 'Error sending email notification.' };
+    }
 
+    // Return success response
     return {
-      statusCode: 200,
-      headers: { 'Content-Type': 'text/html' },
-      body: `<div style="text-align: center; font-family: Arial;">
-               <h2>Thank you for subscribing!</h2>
-               <p>We will notify you when our website launches.</p>
-             </div>`,
+        statusCode: 200,
+        headers: { 'Content-Type': 'text/html' },
+        body: `<div style="text-align: center; font-family: Arial;">
+                 <h2>Thank you for subscribing!</h2>
+                 <p>We will notify you when our website launches.</p>
+               </div>`
     };
-  } catch (error) {
-    console.error('Error handling subscription:', error);
-
-    // Return an HTML error response
-    return {
-      statusCode: 500,
-      headers: { 'Content-Type': 'text/html' },
-      body: `<div style="text-align: center; font-family: Arial; color: red;">
-               <h2>Error</h2>
-               <p>There was an issue processing your subscription. Please try again later.</p>
-             </div>`,
-    };
-  }
 }
