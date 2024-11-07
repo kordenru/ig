@@ -87,8 +87,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     <!-- Include Google reCAPTCHA -->
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
-    <!-- CookieConsent Configuration Script -->
-    <script type="module" src="/assets/js/cookieconsent-config.js"></script> <!-- Adjust the path as needed -->
+    
 
     <!-- JavaScript to handle form submission and display messages -->
     <script>
@@ -125,5 +124,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         grecaptcha.execute();
       });
     </script>
+    <!-- CookieConsent Configuration Script -->
+    <script type="module" src="/assets/js/cookieconsent-config.js"></script> <!-- Adjust the path as needed -->
   </body>
 </BaseLayout>
