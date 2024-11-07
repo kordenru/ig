@@ -36,11 +36,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         </p>
       </div>
 
-      <!-- Visit Etsy Store link -->
-      <div class="div7">
-        <p class="tagline">Want updates? Enter your email below!</p>
-      </div>
-
       <!-- Subscription form -->
       <div class="div8">
         <form id="subscribeForm" action="/api/subscribe" method="POST" class="subscribe-form">
@@ -87,7 +82,47 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     <!-- Include Google reCAPTCHA -->
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
-    
+    <!-- CookieConsent Module Integration and Configuration -->
+    <script type="module">
+      import CookieConsent from 'https://cdn.jsdelivr.net/npm/@orestbida/cookieconsent@3.0.1/dist/cookieconsent.module.min.js';
+
+      const cc = new CookieConsent();
+      cc.run({
+        current_lang: 'en',
+        autoclear_cookies: true,
+        languages: {
+          en: {
+            consent_modal: {
+              title: 'We use cookies!',
+              description: 'This website uses cookies to ensure you get the best experience. <button type="button" data-cc="c-settings">Let me choose</button>',
+              primary_btn: {
+                text: 'Accept all',
+                role: 'accept_all'
+              },
+              secondary_btn: {
+                text: 'Reject all',
+                role: 'accept_necessary'
+              }
+            },
+            settings_modal: {
+              title: 'Cookie preferences',
+              blocks: [
+                {
+                  title: 'Necessary cookies',
+                  description: 'These cookies are essential for the website to function correctly.',
+                  toggle: { value: 'necessary', enabled: true, readonly: true }
+                },
+                {
+                  title: 'Analytics cookies',
+                  description: 'These cookies help us understand how visitors interact with our website.',
+                  toggle: { value: 'analytics', enabled: false, readonly: false }
+                }
+              ]
+            }
+          }
+        }
+      });
+    </script>
 
     <!-- JavaScript to handle form submission and display messages -->
     <script>
@@ -124,47 +159,5 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         grecaptcha.execute();
       });
     </script>
-    <!-- CookieConsent Configuration Script -->
-   <script type="module">
-  import CookieConsent from 'https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.0.1/dist/cookieconsent.umd.js';
-
-  const cc = new CookieConsent();
-  cc.run({
-    current_lang: 'en',
-    autoclear_cookies: true,
-    languages: {
-      en: {
-        consent_modal: {
-          title: 'We use cookies!',
-          description: 'This website uses cookies to ensure you get the best experience. <button type="button" data-cc="c-settings">Let me choose</button>',
-          primary_btn: {
-            text: 'Accept all',
-            role: 'accept_all'
-          },
-          secondary_btn: {
-            text: 'Reject all',
-            role: 'accept_necessary'
-          }
-        },
-        settings_modal: {
-          title: 'Cookie preferences',
-          blocks: [
-            {
-              title: 'Necessary cookies',
-              description: 'These cookies are essential for the website to function correctly.',
-              toggle: { value: 'necessary', enabled: true, readonly: true }
-            },
-            {
-              title: 'Analytics cookies',
-              description: 'These cookies help us understand how visitors interact with our website.',
-              toggle: { value: 'analytics', enabled: false, readonly: false }
-            }
-          ]
-        }
-      }
-    }
-  });
-</script>
-
   </body>
 </BaseLayout>
