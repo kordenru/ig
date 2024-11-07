@@ -84,11 +84,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   <!-- Include Google reCAPTCHA -->
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
-  <!-- Include Orest Bida's CookieConsent CSS and JavaScript from CDN -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css" />
-  <script src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js"></script>
+  <!-- Include CookieConsent CSS and JavaScript locally -->
+  <link rel="stylesheet" href="/assets/css/cookieconsent.min.css" />
+  <script src="/assets/js/cookieconsent.min.js"></script>
 
-  <!-- Initialize Orest Bida's CookieConsent -->
+  <!-- Initialize CookieConsent -->
   <script>
     window.addEventListener("load", function () {
       const cc = initCookieConsent();
