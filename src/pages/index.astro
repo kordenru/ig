@@ -84,25 +84,57 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   <!-- Include Google reCAPTCHA -->
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
-  <!-- Include CookieConsent CSS and JavaScript from CDN -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent/3.0.1/cookieconsent.min.css" integrity="sha512-YRpr2O93/J+i4pgL2ywd54AZpgRZRsmNTd9DbryJzKbGpP5KT0VWyxSpbfF2KP4K7E96A9o31h/Zox2C4idKQA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent/3.0.1/cookieconsent.min.js" integrity="sha512-PL53Wlf5l5ZGHL65qZL7aIMvAYqurA3yb1Krtbi5QxqSYRePhXzBl/d9MQab7V8KaL5ChUbw/An5ng2XPCvOaA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- Include Orest Bida's CookieConsent CSS and JavaScript from CDN -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js"></script>
 
-  <!-- Initialize CookieConsent -->
+  <!-- Initialize Orest Bida's CookieConsent -->
   <script>
     window.addEventListener("load", function () {
-      window.cookieconsent.initialise({
-        palette: {
-          popup: { background: "#000" },
-          button: { background: "#f1d600" }
-        },
-        theme: "classic",
-        position: "bottom-right",
-        content: {
-          message: "This website uses cookies to ensure you get the best experience on our website.",
-          dismiss: "Got it!",
-          link: "Learn more",
-          href: "/privacy-policy" // Link to your privacy policy page
+      const cc = initCookieConsent();
+      cc.run({
+        current_lang: "en",
+        autoclear_cookies: true,
+        theme_css: "", // Custom CSS (leave empty for default)
+        languages: {
+          en: {
+            consent_modal: {
+              title: "We use cookies!",
+              description: 'This website uses cookies to ensure you get the best experience. <button type="button" data-cc="c-settings">Let me choose</button>',
+              primary_btn: {
+                text: "Accept all",
+                role: "accept_all"
+              },
+              secondary_btn: {
+                text: "Reject all",
+                role: "accept_necessary"
+              }
+            },
+            settings_modal: {
+              title: "Cookie preferences",
+              save_settings_btn: "Save settings",
+              accept_all_btn: "Accept all",
+              reject_all_btn: "Reject all",
+              close_btn_label: "Close",
+              blocks: [
+                {
+                  title: "Necessary cookies",
+                  description: "These cookies are essential for the website to function correctly.",
+                  toggle: { value: "necessary", enabled: true, readonly: true }
+                },
+                {
+                  title: "Analytics cookies",
+                  description: "These cookies help us understand how visitors interact with our website.",
+                  toggle: { value: "analytics", enabled: false, readonly: false }
+                },
+                {
+                  title: "Marketing cookies",
+                  description: "These cookies are used for marketing purposes.",
+                  toggle: { value: "marketing", enabled: false, readonly: false }
+                }
+              ]
+            }
+          }
         }
       });
     });
