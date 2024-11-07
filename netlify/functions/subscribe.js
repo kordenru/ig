@@ -25,8 +25,16 @@ export async function handler(event) {
         return { statusCode: 405, body: 'Method Not Allowed' };
     }
 
-    // Parse the form data
-    const { email } = JSON.parse(event.body);
+    // Parse the form data from application/x-www-form-urlencoded format
+    const params = new URLSearchParams(event.body);
+    const email = params.get('email');
+
+    if (!email) {
+        return {
+            statusCode: 400,
+            body: 'Email is required.',
+        };
+    }
 
     // Append email to CSV file in /tmp
     try {
