@@ -29,6 +29,13 @@
   --cc-footer-bg: #E3DED8; /* Light grey footer background */
   --cc-footer-color: #8B7E6B;
   --cc-separator-border-color: #C1B299;
+
+  /* Toggle and Category Block Colors */
+  --cc-toggle-on-bg: #C1B299; /* Light beige for active toggle */
+  --cc-toggle-off-bg: #E3DED8; /* Light grey for inactive toggle */
+  --cc-toggle-on-knob-bg: #FFFFFF; /* White knob */
+  --cc-cookie-category-block-bg: #E3DED8; /* Light grey for category blocks */
+  --cc-cookie-category-block-hover-bg: #C1B299; /* Beige for hover effect */
 }
 
 /* Body and Consent Modal */
@@ -97,10 +104,13 @@
 
 /* Customize Toggle Appearance */
 #cc-main .section__toggle {
-  background: var(--cc-toggle-on-bg);
+  background: var(--cc-toggle-off-bg); /* Background for inactive toggle */
+}
+#cc-main .section__toggle:checked {
+  background: var(--cc-toggle-on-bg); /* Background for active toggle */
 }
 #cc-main .toggle__icon-circle {
-  background: var(--cc-toggle-on-knob-bg);
+  background: var(--cc-toggle-on-knob-bg); /* White knob */
 }
 
 /* Preferences Modal Styling */
@@ -112,6 +122,24 @@
 #cc-main .pm__title {
   color: var(--cc-primary-color);
 }
+
+/* Cookie Category Blocks */
+#cc-main .pm__section--toggle {
+  background: var(--cc-cookie-category-block-bg);
+  border: 1px solid var(--cc-separator-border-color);
+}
+#cc-main .pm__section--toggle:hover {
+  background: var(--cc-cookie-category-block-hover-bg);
+}
+#cc-main .pm__section--toggle .pm__section-title {
+  color: var(--cc-primary-color);
+}
+
+/* Lightened Toggle Button Colors */
 #cc-main .pm__btn--secondary {
   background: var(--cc-btn-secondary-bg);
+  color: var(--cc-btn-secondary-color);
+}
+#cc-main .pm__btn--secondary:hover {
+  background: var(--cc-btn-secondary-hover-bg);
 }
