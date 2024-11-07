@@ -32,16 +32,14 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
     <!-- Visit Etsy Store link -->
     <div class="div7">
-      <p class="tagline">Want updates? Enter your email below!</p>
+    <p class="tagline">Want updates? Enter your email below!</p>
     </div>
 
     <!-- Subscription form -->
     <div class="div8">
       <form id="subscribeForm" action="/api/subscribe" method="POST" class="subscribe-form">
         <input type="email" name="email" placeholder="Enter your e-mail" aria-label="Email Input" required />
-        <button type="submit" class="g-recaptcha" data-sitekey="YOUR_SITE_KEY" data-callback="onReCaptchaSuccess" data-size="invisible" aria-label="Notify me when launched">
-          Notify Me
-        </button>
+        <button type="submit" aria-label="Notify me when launched">Notify Me</button>
         <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response" />
       </form>
 
@@ -70,6 +68,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         <a href="https://www.facebook.com/IGbonsaiCeramics/" target="_blank" aria-label="Facebook">
           <img src="/assets/icons/facebook.png" alt="Facebook" />
         </a>
+       
       </div>
     </div>
 
@@ -81,69 +80,39 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     </div>
   </div>
 
-  <!-- Include Google reCAPTCHA -->
-  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-
-  <!-- Include CookieConsent CSS and JavaScript from CDN -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent/3.0.1/cookieconsent.min.css" integrity="sha512-YRpr2O93/J+i4pgL2ywd54AZpgRZRsmNTd9DbryJzKbGpP5KT0VWyxSpbfF2KP4K7E96A9o31h/Zox2C4idKQA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent/3.0.1/cookieconsent.min.js" integrity="sha512-PL53Wlf5l5ZGHL65qZL7aIMvAYqurA3yb1Krtbi5QxqSYRePhXzBl/d9MQab7V8KaL5ChUbw/An5ng2XPCvOaA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-  <!-- Initialize CookieConsent -->
+  <!-- JavaScript to handle form submission and display messages -->
   <script>
-    window.addEventListener("load", function () {
-      window.cookieconsent.initialise({
-        palette: {
-          popup: { background: "#000" },
-          button: { background: "#f1d600" }
-        },
-        theme: "classic",
-        position: "bottom-right",
-        content: {
-          message: "This website uses cookies to ensure you get the best experience on our website.",
-          dismiss: "Got it!",
-          link: "Learn more",
-          href: "/privacy-policy" // Link to your privacy policy page
-        }
-      });
-    });
-
-    // Trigger reCAPTCHA when form is submitted
-    document.getElementById('subscribeForm').addEventListener('submit', function(event) {
+    document.getElementById('subscribeForm').addEventListener('submit', function (event) {
       event.preventDefault();
-      grecaptcha.execute(); // Trigger invisible reCAPTCHA
-    });
-
-    // Function called upon successful reCAPTCHA verification
-    function onReCaptchaSuccess(token) {
-      const form = document.getElementById('subscribeForm');
-      const formData = new FormData(form);
-      formData.append('g-recaptcha-response', token);
-
-      // Hide form and show success message
+  
+      // Hide the form and display the success message before the fetch request
       document.getElementById('subscribeForm').style.display = 'none';
       document.getElementById('successMessage').style.display = 'block';
-
-      // Send data to server
-      fetch(form.action, {
+  
+      fetch(event.target.action, {
         method: 'POST',
-        body: formData
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams(new FormData(event.target)),
       })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Server error');
-        }
-        return response.text();
-      })
-      .then(() => {
-        // No further action needed, success message already shown
-      })
-      .catch((error) => {
-        // Show error message
-        document.getElementById('subscribeForm').style.display = 'block';
-        document.getElementById('successMessage').style.display = 'none';
-        document.getElementById('errorMessage').style.display = 'block';
-        console.error('Error:', error.message);
-      });
-    }
+        .then(response => {
+          if (!response.ok) {
+            // If the server responds with an error, show the error message
+            throw new Error('Server error');
+          }
+          return response.text();
+        })
+        .then(() => {
+          // Successfully handled on the server, no further action needed
+        })
+        .catch((error) => {
+          // Show the form again and display an error message
+          document.getElementById('subscribeForm').style.display = 'block';
+          document.getElementById('successMessage').style.display = 'none';
+          document.getElementById('errorMessage').style.display = 'block';
+          console.error('Error:', error.message);
+        });
+    });
   </script>
 </BaseLayout>
