@@ -83,11 +83,35 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
   <!-- JavaScript to handle form submission and display messages -->
   <script>
-    // Define `onReCaptchaSuccess` as a global function
-    window.onReCaptchaSuccess = function(token) {
-      // Submit the form programmatically
-      document.getElementById('subscribeForm').submit();
-    };
+    function onReCaptchaSuccess(token) {
+      const form = document.getElementById('subscribeForm');
+      const formData = new FormData(form);
+
+      // Submit the form data via fetch to avoid page reload
+      fetch(form.action, {
+        method: 'POST',
+        body: new URLSearchParams(formData),
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Server error');
+          }
+          return response.text();
+        })
+        .then(() => {
+          // Show success message and hide the form
+          document.getElementById('subscribeForm').style.display = 'none';
+          document.getElementById('successMessage').style.display = 'block';
+        })
+        .catch((error) => {
+          // Display error message if there's an issue
+          document.getElementById('errorMessage').style.display = 'block';
+          console.error('Error:', error.message);
+        });
+    }
 
     document.getElementById('subscribeForm').addEventListener('submit', function (event) {
       event.preventDefault();
