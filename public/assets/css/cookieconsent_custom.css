@@ -1,0 +1,48 @@
+<style>
+  /* Cookie Consent Styles */
+  .cc__modal {
+    font-family: 'Roboto', sans-serif; /* Replace with your site's primary font */
+    background-color: #E3DED8; /* Background color to match your site */
+    color: #4E3B2A; /* Text color to match your site */
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Button Styles */
+  .cc__btn {
+    font-family: 'Playfair Display', serif; /* Use your secondary font for a distinct look */
+    background-color: #4E3B2A; /* Button background color */
+    color: #E3DED8; /* Button text color */
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    margin: 5px;
+    cursor: pointer;
+  }
+
+  .cc__btn:hover {
+    background-color: #8B7E6B; /* Button hover color */
+  }
+
+  /* Customize individual buttons if needed */
+  .cc__btn--accept-all {
+    background-color: #4E3B2A;
+  }
+
+  .cc__btn--reject-all {
+    background-color: #C1B299;
+  }
+
+  /* Link Styles in Consent Box */
+  .cc__link {
+    color: #4E3B2A; /* Link color */
+    text-decoration: underline;
+  }
+
+  /* Modal Positioning */
+  .cc__modal {
+    max-width: 400px; /* Set a maximum width */
+    margin: 0 auto; /* Center horizontally */
+  }
+</style>
