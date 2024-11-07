@@ -39,7 +39,10 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     <div class="div8">
       <form id="subscribeForm" action="/api/subscribe" method="POST" class="subscribe-form">
         <input type="email" name="email" placeholder="Enter your e-mail" aria-label="Email Input" required />
-        <button type="submit" aria-label="Notify me when launched">Notify Me</button>
+        <button type="submit" class="g-recaptcha" data-sitekey="YOUR_SITE_KEY" data-callback="onReCaptchaSuccess" data-size="invisible" aria-label="Notify me when launched">
+          Notify Me
+        </button>
+        <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response" />
       </form>
 
       <!-- Success message, hidden by default -->
@@ -78,31 +81,69 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     </div>
   </div>
 
-  <script>
-    document.getElementById('subscribeForm').addEventListener('submit', function(event) {
-      event.preventDefault(); // Prevent default form submission
+  <!-- Include Google reCAPTCHA -->
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
+  <!-- Include CookieConsent CSS and JavaScript from CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent/3.0.1/cookieconsent.min.css" integrity="sha512-YRpr2O93/J+i4pgL2ywd54AZpgRZRsmNTd9DbryJzKbGpP5KT0VWyxSpbfF2KP4K7E96A9o31h/Zox2C4idKQA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent/3.0.1/cookieconsent.min.js" integrity="sha512-PL53Wlf5l5ZGHL65qZL7aIMvAYqurA3yb1Krtbi5QxqSYRePhXzBl/d9MQab7V8KaL5ChUbw/An5ng2XPCvOaA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <!-- Initialize CookieConsent -->
+  <script>
+    window.addEventListener("load", function () {
+      window.cookieconsent.initialise({
+        palette: {
+          popup: { background: "#000" },
+          button: { background: "#f1d600" }
+        },
+        theme: "classic",
+        position: "bottom-right",
+        content: {
+          message: "This website uses cookies to ensure you get the best experience on our website.",
+          dismiss: "Got it!",
+          link: "Learn more",
+          href: "/privacy-policy" // Link to your privacy policy page
+        }
+      });
+    });
+
+    // Trigger reCAPTCHA when form is submitted
+    document.getElementById('subscribeForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      grecaptcha.execute(); // Trigger invisible reCAPTCHA
+    });
+
+    // Function called upon successful reCAPTCHA verification
+    function onReCaptchaSuccess(token) {
       const form = document.getElementById('subscribeForm');
       const formData = new FormData(form);
+      formData.append('g-recaptcha-response', token);
 
+      // Hide form and show success message
+      document.getElementById('subscribeForm').style.display = 'none';
+      document.getElementById('successMessage').style.display = 'block';
+
+      // Send data to server
       fetch(form.action, {
         method: 'POST',
         body: formData
       })
       .then(response => {
-        if (!response.ok) throw new Error('Server error');
+        if (!response.ok) {
+          throw new Error('Server error');
+        }
         return response.text();
       })
       .then(() => {
-        document.getElementById('subscribeForm').style.display = 'none';
-        document.getElementById('successMessage').style.display = 'block';
+        // No further action needed, success message already shown
       })
-      .catch(error => {
+      .catch((error) => {
+        // Show error message
         document.getElementById('subscribeForm').style.display = 'block';
         document.getElementById('successMessage').style.display = 'none';
         document.getElementById('errorMessage').style.display = 'block';
         console.error('Error:', error.message);
       });
-    });
+    }
   </script>
 </BaseLayout>
