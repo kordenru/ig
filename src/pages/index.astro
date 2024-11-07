@@ -142,22 +142,22 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     // Trigger reCAPTCHA when form is submitted
     document.getElementById('subscribeForm').addEventListener('submit', function(event) {
       event.preventDefault();
+      console.log("Form submitted, executing reCAPTCHA...");
       grecaptcha.execute(); // Trigger invisible reCAPTCHA
     });
 
     // Function called upon successful reCAPTCHA verification
     function onReCaptchaSuccess(token) {
+      console.log("reCAPTCHA succeeded, token received:", token);
       const form = document.getElementById('subscribeForm');
-      const formData = new FormData(form);
+      const formData = new URLSearchParams(new FormData(form));
       formData.append('g-recaptcha-response', token);
 
-      // Hide form and show success message
-      document.getElementById('subscribeForm').style.display = 'none';
-      document.getElementById('successMessage').style.display = 'block';
-
-      // Send data to server
       fetch(form.action, {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
         body: formData
       })
       .then(response => {
@@ -167,10 +167,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         return response.text();
       })
       .then(() => {
-        // No further action needed, success message already shown
+        document.getElementById('subscribeForm').style.display = 'none';
+        document.getElementById('successMessage').style.display = 'block';
+        console.log("Form successfully submitted, success message displayed.");
       })
       .catch((error) => {
-        // Show error message
         document.getElementById('subscribeForm').style.display = 'block';
         document.getElementById('successMessage').style.display = 'none';
         document.getElementById('errorMessage').style.display = 'block';
