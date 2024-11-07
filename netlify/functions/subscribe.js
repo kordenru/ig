@@ -4,29 +4,31 @@ import nodemailer from 'nodemailer';
 import axios from 'axios';
 
 // Define the path to the CSV file in the Netlify function environment
-const filePath = path.resolve('/tmp/subscribers.csv'); // Use /tmp for serverless environments
+const filePath = path.resolve('/tmp/subscribers.csv');
 
 // Ensure the CSV file exists in /tmp
 if (!fs.existsSync(filePath)) {
-    fs.writeFileSync(filePath, 'email\n'); // Create CSV file with header
+    fs.writeFileSync(filePath, 'email\n');
 }
 
 // Email transporter configuration (using environment variables)
 const transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
-        user: process.env.EMAIL_USER, // Your email address
-        pass: process.env.EMAIL_PASS, // Your email password or app-specific password
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
     },
 });
 
 // Function to verify reCAPTCHA
 async function verifyRecaptcha(token) {
-    const secretKey = process.env.RECAPTCHA_SECRET_KEY; // Set this in Netlify's environment variables
+    const secretKey = process.env.RECAPTCHA_SECRET_KEY;
 
     try {
         const response = await axios.post(
-            'https://www.google.com/recaptcha/api/siteverify', null, {
+            'https://www.google.com/recaptcha/api/siteverify',
+            null,
+            {
                 params: {
                     secret: secretKey,
                     response: token,
@@ -42,35 +44,21 @@ async function verifyRecaptcha(token) {
 
 // Netlify function to handle subscription form submission
 export async function handler(event) {
-    console.log("Function triggered. HTTP Method:", event.httpMethod);
-    console.log("Headers:", event.headers);
-    console.log("Raw event body:", event.body); // Log the raw body for troubleshooting
-
     if (event.httpMethod !== 'POST') {
         return { statusCode: 405, body: 'Method Not Allowed' };
     }
 
     let email, recaptchaToken;
 
-    // Parse the request body, handling JSON and form-encoded data
+    // Parse the request body
     try {
-        if (event.headers['content-type'] === 'application/json') {
-            const body = JSON.parse(event.body);
-            email = body.email;
-            recaptchaToken = body['g-recaptcha-response'];
-        } else if (event.headers['content-type'] === 'application/x-www-form-urlencoded') {
-            const params = new URLSearchParams(event.body);
-            email = params.get('email');
-            recaptchaToken = params.get('g-recaptcha-response');
-        } else {
-            throw new Error("Unsupported content type");
-        }
+        const params = new URLSearchParams(event.body);
+        email = params.get('email');
+        recaptchaToken = params.get('g-recaptcha-response');
 
         if (!email || !recaptchaToken) {
             throw new Error("Missing email or reCAPTCHA token");
         }
-
-        console.log("Parsed email:", email);
     } catch (error) {
         console.error('Error parsing request body:', error);
         return {
@@ -85,43 +73,29 @@ export async function handler(event) {
         return { statusCode: 400, body: 'reCAPTCHA verification failed.' };
     }
 
-    // Append email to CSV file in /tmp
+    // Append email to CSV
     try {
         fs.appendFileSync(filePath, `${email}\n`);
-        console.log("Email appended successfully.");
     } catch (error) {
         console.error('Error writing to CSV:', error);
         return { statusCode: 500, body: 'Error saving subscription data.' };
     }
 
-    // Read all subscribers from CSV for email summary
-    let totalSubscribers;
-    try {
-        const subscribers = fs.readFileSync(filePath, 'utf-8').split('\n').slice(1).filter(Boolean);
-        totalSubscribers = subscribers.length;
-        console.log("Total subscribers:", totalSubscribers);
-    } catch (error) {
-        console.error('Error reading from CSV:', error);
-        return { statusCode: 500, body: 'Error reading subscription data.' };
-    }
-
     // Send email notification to the owner
     const mailOptions = {
         from: process.env.EMAIL_USER,
-        to: process.env.EMAIL_USER, // Owner's email
+        to: process.env.EMAIL_USER,
         subject: 'New Subscriber Notification',
-        text: `You have a new subscriber: ${email}\n\nTotal subscribers: ${totalSubscribers}`,
+        text: `You have a new subscriber: ${email}`,
     };
 
     try {
-        const emailResponse = await transporter.sendMail(mailOptions);
-        console.log("Email sent successfully:", emailResponse);
+        await transporter.sendMail(mailOptions);
     } catch (error) {
         console.error('Error sending email:', error);
         return { statusCode: 500, body: 'Error sending email notification.' };
     }
 
-    // Success response
     return {
         statusCode: 200,
         headers: { 'Content-Type': 'text/html' },
