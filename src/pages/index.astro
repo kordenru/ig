@@ -38,30 +38,16 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
       <!-- Subscription form -->
       <div class="div8">
-        <form method="POST" action="/.netlify/functions/server" data-netlify="true" netlify-honeypot="bot-field" id="subscribeForm" class="subscribe-form" netlify>
-          <!-- Hidden fields -->
+        <form method="POST" data-netlify="true" name="subscribe">
+          <!-- Hidden fields for Netlify -->
           <input type="hidden" name="form-name" value="subscribe" />
-          <input type="hidden" name="submission-date" id="submissionDate" />
-          <input type="hidden" name="ip-address" id="ipAddress" />
-
-          <!-- Honeypot field -->
-          <p hidden>
-            <label>Don’t fill this out if you're human: <input name="bot-field" /></label>
-          </p>
 
           <!-- Email input -->
-          <input type="email" name="email" placeholder="Enter your e-mail" aria-label="Email Input" required />
+          <label for="email">Email Address:</label>
+          <input type="email" id="email" name="email" placeholder="Enter your e-mail" aria-label="Email Input" required />
 
-          <!-- Submit button with reCAPTCHA -->
-          <button
-            type="submit"
-            class="g-recaptcha"
-            data-sitekey="6Lf-nHcqAAAAALnC28_7N03OgK3kdOhFEw-sVrG9"
-            data-callback="onReCaptchaSuccess"
-            data-size="invisible"
-          >
-            Notify Me
-          </button>
+          <!-- Submit button -->
+          <button type="submit">Notify Me</button>
         </form>
 
         <!-- Success and Error Messages -->
@@ -98,13 +84,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       </div>
     </div>
 
-    <!-- Include Google reCAPTCHA -->
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-
-    <!-- Cookie Consent UMD Script -->
+    <!-- Include Cookie Consent -->
     <script src="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.0.1/dist/cookieconsent.umd.js"></script>
-
-    <!-- CookieConsent Configuration Script -->
     <script>
       document.documentElement.classList.add('cc--darkmode');
 
@@ -128,42 +109,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           },
         },
       });
-
-      // Google reCAPTCHA callback function
-      window.onReCaptchaSuccess = async function onReCaptchaSuccess(token) {
-        const form = document.getElementById('subscribeForm');
-        const now = new Date();
-        document.getElementById('submissionDate').value = now.toISOString();
-
-        // Fetch IP address dynamically
-        try {
-          const ipResponse = await fetch("https://api.ipify.org?format=json");
-          const ipData = await ipResponse.json();
-          document.getElementById('ipAddress').value = ipData.ip;
-        } catch (error) {
-          console.error("Failed to fetch IP address:", error);
-        }
-
-        const formData = new FormData(form);
-        formData.append('g-recaptcha-response', token);
-
-        fetch(form.action, {
-          method: 'POST',
-          body: new URLSearchParams(formData),
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        })
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error('Server error');
-            }
-            document.getElementById('subscribeForm').style.display = 'none';
-            document.getElementById('successMessage').style.display = 'block';
-          })
-          .catch((error) => {
-            console.error(error.message);
-            document.getElementById('errorMessage').style.display = 'block';
-          });
-      };
     </script>
   </body>
 </BaseLayout>
