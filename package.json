@@ -18,6 +18,7 @@
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
     "express": "^4.21.0",
+    "node-fetch": "^3.3.2",
     "nodemailer": "^6.9.15",
     "vanilla-cookieconsent": "^3.0.1"
   }
