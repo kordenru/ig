@@ -1,10 +1,13 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
+
 <BaseLayout>
   <head>
     <!-- CookieConsent CSS -->
     <link rel="stylesheet" href="/assets/css/cookieconsent.css">
+   
+
   </head>
 
   <body>
@@ -30,31 +33,25 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
       <!-- Tagline -->
       <div class="div7">
-        <p class="tagline">
-          We’re putting the final touches in place, and we can’t wait to share it with you.<br />
+        <p class="tagline">We’re putting the final touches in place, and we can’t wait to share it with you.<br>
           In the meantime, visit our <a href="https://www.etsy.com/shop/IGBonsaiCeramics" target="_blank" class="etsy-store-link">Etsy Store.</a>
         </p>
       </div>
 
       <!-- Subscription form -->
       <div class="div8">
-        <form method="POST" data-netlify="true" name="subscribe">
-          <!-- Hidden fields for Netlify -->
-          <input type="hidden" name="form-name" value="subscribe" />
-
-          <!-- Email input -->
-          <label for="email">Email Address:</label>
-          <input type="email" id="email" name="email" placeholder="Enter your e-mail" aria-label="Email Input" required />
-
-          <!-- Submit button -->
-          <button type="submit">Notify Me</button>
+        <form id="subscribeForm" action="/api/subscribe" method="POST" class="subscribe-form">
+          <input type="email" name="email" placeholder="Enter your e-mail" aria-label="Email Input" required />
+          <button type="submit" class="g-recaptcha" data-sitekey="6Lf-nHcqAAAAALnC28_7N03OgK3kdOhFEw-sVrG9" data-callback="onReCaptchaSuccess" data-size="invisible">Notify Me</button>
         </form>
 
-        <!-- Success and Error Messages -->
+        <!-- Success message, hidden by default -->
         <div id="successMessage" class="success-message" style="display: none;">
           <h2>Thank you for subscribing!</h2>
           <p>We will notify you when our website launches.</p>
         </div>
+
+        <!-- Error message, hidden by default -->
         <div id="errorMessage" class="error-message" style="display: none;">
           <h2>An error occurred!</h2>
           <p>Please try again later.</p>
@@ -84,30 +81,121 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       </div>
     </div>
 
-    <!-- Include Cookie Consent -->
-    <script src="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.0.1/dist/cookieconsent.umd.js"></script>
-    <script>
-      document.documentElement.classList.add('cc--darkmode');
+    <!-- Include Google reCAPTCHA -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
-      CookieConsent.run({
+<!-- Cookie Consent UMD Script -->
+  <script src="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.0.1/dist/cookieconsent.umd.js"></script>
+
+  <!-- CookieConsent Configuration Script -->
+  <script>
+    document.documentElement.classList.add('cc--darkmode'); // Enable dark mode
+
+    CookieConsent.run({
         guiOptions: {
-          consentModal: { layout: "box", position: "bottom right" },
-          preferencesModal: { layout: "box", position: "right" },
+            consentModal: {
+                layout: "box",
+                position: "bottom right",
+                equalWeightButtons: true,
+                flipButtons: false
+            },
+            preferencesModal: {
+                layout: "box",
+                position: "right",
+                equalWeightButtons: true,
+                flipButtons: false
+            }
+        },
+        categories: {
+            necessary: { readOnly: true },
+            functionality: {},
+            analytics: {}
         },
         language: {
-          default: "en",
-          translations: {
-            en: {
-              consentModal: {
-                title: "We use cookies.",
-                description:
-                  "This website uses cookies to improve your browsing experience.",
-                acceptAllBtn: "Accept all",
-                acceptNecessaryBtn: "Reject all",
-              },
-            },
+            default: "en",
+            autoDetect: "browser",
+            translations: {
+                en: {
+                    consentModal: {
+                        title: "We use cookies.",
+                        description: "This website uses cookies to improve your browsing experience for the following purposes: to enable basic functionality of the website, to provide a better experience on the website, to measure your interest in our products and services and to personalize marketing interactions.",
+                        acceptAllBtn: "Accept all",
+                        acceptNecessaryBtn: "Reject all",
+                        showPreferencesBtn: "Manage preferences",
+                        footer: "<a href=\"#link\">Privacy Policy</a> <a href=\"#link\">Terms and conditions</a>"
+                    },
+                    preferencesModal: {
+                        title: "Consent Preferences Center",
+                        acceptAllBtn: "Accept all",
+                        acceptNecessaryBtn: "Reject all",
+                        savePreferencesBtn: "Save preferences",
+                        closeIconLabel: "Close modal",
+                        serviceCounterLabel: "Service|Services",
+                        sections: [
+                            {
+                                title: "Cookie Usage",
+                                description: " We use cookies on our website to store and/or access information on a device, and actively scan device characteristics for identification; and to select, provide and measure personalised ads, content, audience insights and product development. You may accept or manage your choices below, and may change your choices or exercise your rights (including withdrawing consent or objecting to our use of data at any time)."
+                            },
+                            {
+                                title: "Strictly Necessary Cookies <span class=\"pm__badge\">Always Enabled</span>",
+                                description: "These cookies are necessary for our website or app to function and cannot be switched off in our systems. They are usually only set in response to actions made by you which amount to a request for services, such as setting your privacy preferences, logging in or filling in forms. You can set your browser to block or alert you about these cookies, but some parts of the site will not then work. These cookies do not store any personally identifiable information.",
+                                linkedCategory: "necessary"
+                            },
+                            {
+                                title: "Functionality Cookies",
+                                description: "These cookies enable the website or app to provide enhanced functionality and personalization. These are used to recognize you when you return to our website. This enables us to personalize our content for you, greet you by name, and remember your preferences (for example, your choice of language or region). If you do not allow these cookies then some or all of these services may not function properly.",
+                                linkedCategory: "functionality"
+                            },
+                            {
+                                title: "Analytics Cookies",
+                                description: "These cookies tell us how visitors use our website or app. This may include allowing us to count visits and traffic sources so we can measure and improve the performance of our website and app. This helps us to know which pages are the most and least popular and to see how visitors move around the website",
+                                linkedCategory: "analytics"
+                            },
+                            {
+                                title: "More information",
+                                description: "For any query in relation to website policy on cookies and your choices, please <a class=\"cc__link\" href=\"#yourdomain.com\">contact us</a>."
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    });
+  </script>
+
+    <!-- JavaScript to handle form submission and display messages -->
+    <script>
+      window.onReCaptchaSuccess = function onReCaptchaSuccess(token) {
+        const form = document.getElementById('subscribeForm');
+        const formData = new FormData(form);
+        formData.append('g-recaptcha-response', token);
+
+        fetch(form.action, {
+          method: 'POST',
+          body: new URLSearchParams(formData),
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
           },
-        },
+        })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Server error');
+            }
+            return response.text();
+          })
+          .then(() => {
+            document.getElementById('subscribeForm').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'block';
+          })
+          .catch((error) => {
+            document.getElementById('errorMessage').style.display = 'block';
+            console.error('Error:', error.message);
+          });
+      }
+
+      document.getElementById('subscribeForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        grecaptcha.execute();
       });
     </script>
   </body>
