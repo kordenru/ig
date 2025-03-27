@@ -17,7 +17,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     <link rel="stylesheet" href="/assets/css/cookieconsent.css">
     
     <!-- reCAPTCHA -->
-    <script src="https://www.google.com/recaptcha/api.js?render=6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB" async defer></script>
+<script src="https://www.google.com/recaptcha/api.js?render=6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB" async defer></script>
     
     <style>
       .success-message, .error-message {
@@ -174,20 +174,17 @@ import BaseLayout from "../layouts/BaseLayout.astro";
             // Get reCAPTCHA token
 document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById("subscribeForm");
-    const submitButton = document.getElementById("submitButton");
 
     form.addEventListener("submit", async function (event) {
-        event.preventDefault(); // Prevent form from submitting immediately
+        event.preventDefault(); // Prevent form submission
 
-        // Ensure reCAPTCHA is ready before executing
-        if (typeof grecaptcha !== "undefined") {
+        if (typeof grecaptcha !== "undefined" && grecaptcha.execute) {
             grecaptcha.ready(async function () {
                 try {
-                    // Fetch reCAPTCHA token
                     const token = await grecaptcha.execute('6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB', { action: 'submit' });
 
                     if (!token) {
-                        console.error("reCAPTCHA token was not generated.");
+                        console.error("Failed to retrieve reCAPTCHA token.");
                         return;
                     }
 
@@ -204,7 +201,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             });
         } else {
-            console.error("reCAPTCHA is not loaded yet.");
+            console.error("reCAPTCHA is not available yet.");
         }
     });
 
