@@ -103,13 +103,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           grecaptcha.execute('6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB', { 
             action: 'submit' 
           }).then(token => {
-            // Simulate successful submission (remove this in production)
-            setTimeout(() => {
-              form.style.display = 'none';
-              document.getElementById('successMessage').style.display = 'block';
-              button.disabled = false;
-              button.innerHTML = 'Notify Me';
-            }, 1000);
+            
 
             /* For real backend integration:
             fetch('YOUR_ENDPOINT_HERE', {
