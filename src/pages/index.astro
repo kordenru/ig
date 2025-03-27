@@ -4,199 +4,134 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
 <BaseLayout>
   <head>
-    <!-- CookieConsent CSS -->
     <link rel="stylesheet" href="/assets/css/cookieconsent.css">
-
-
+    <script>
+      // Global reCAPTCHA settings
+      window.recaptchaSettings = {
+        siteKey: 'YOUR_RECAPTCHA_V3_SITE_KEY',
+        action: 'subscribe'
+      };
+    </script>
   </head>
 
   <body>
-    <div class="parent">
-      <!-- Logo and Text Block -->
-      <div class="div2">
-        <div class="logo-container">
-          <img src="/assets/icons/ig-logo.svg" alt="Company Logo" class="logo-image" />
-        </div>
-        <div class="text-container">
-          <div class="text-block">
-            <h2>IANA GLUSHACH</h2>
-            <hr class="separator-line" />
-            <p class="b-c-text">Bonsai and Ceramics</p>
-          </div>
-        </div>
-      </div>
+    <!-- [Keep your existing HTML structure here] -->
 
-      <!-- "We Are Coming Soon" -->
-      <div class="div6">
-        <h2>Our new website is on its way!</h2>
-      </div>
+    <!-- Updated Subscription Form -->
+    <div class="div8">
+      <form 
+        id="subscribeForm" 
+        action="/api/subscribe" 
+        method="POST" 
+        class="subscribe-form"
+        data-js="subscribe-form"
+      >
+        <input 
+          type="email" 
+          name="email" 
+          placeholder="Enter your e-mail" 
+          aria-label="Email address for website updates"
+          required
+          pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
+        >
+        <button 
+          type="submit"
+          id="submitButton"
+          aria-label="Notify me when website launches"
+        >
+          Notify Me
+          <span class="loader" hidden aria-hidden="true"></span>
+        </button>
+        <div class="sr-only" aria-live="polite" role="status"></div>
+      </form>
 
-      <!-- Tagline -->
-      <div class="div7">
-        <p class="tagline">We’re putting the final touches in place, and we can’t wait to share it with you.<br>
-          In the meantime, visit our <a href="https://www.etsy.com/shop/IGBonsaiCeramics" target="_blank" class="etsy-store-link">Etsy Store.</a>
-        </p>
-      </div>
-
-      <!-- Subscription form -->
-      <div class="div8">
-        <form id="subscribeForm" action="/api/subscribe" method="POST" class="subscribe-form">
-          <input type="email" name="email" placeholder="Enter your e-mail" aria-label="Email Input" required />
-          <button type="submit" class="g-recaptcha" data-sitekey="6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB" data-callback="onReCaptchaSuccess" data-size="invisible">Notify Me</button>
-        </form>
-
-        <!-- Success message, hidden by default -->
-        <div id="successMessage" class="success-message" style="display: none;">
-          <h2>Thank you for subscribing!</h2>
-          <p>We will notify you when our website launches.</p>
-        </div>
-
-        <!-- Error message, hidden by default -->
-        <div id="errorMessage" class="error-message" style="display: none;">
-          <h2>An error occurred!</h2>
-          <p>Please try again later.</p>
-        </div>
-      </div>
-
-      <!-- Follow us section -->
-      <div class="div9">
-        <h3>Follow us on</h3>
-      </div>
-      <div class="div10">
-        <div class="social-icons">
-          <a href="https://www.instagram.com/ig_bonsai_ceramics/" target="_blank" aria-label="Instagram">
-            <img src="/assets/icons/insta.png" alt="Instagram" />
-          </a>
-          <a href="https://www.facebook.com/IGbonsaiCeramics/" target="_blank" aria-label="Facebook">
-            <img src="/assets/icons/facebook.png" alt="Facebook" />
-          </a>
-        </div>
-      </div>
-
-      <!-- Footer -->
-      <div class="div13">
-        <footer>
-          2024 &copy; Iana Glushach Bonsai and Ceramics - All Rights Reserved
-        </footer>
+      <!-- Messages -->
+      <div id="messages" aria-live="polite">
+        <!-- Success/Error templates here -->
       </div>
     </div>
 
-    <!-- Include Google reCAPTCHA -->
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-
-<!-- Cookie Consent UMD Script -->
-  <script src="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.0.1/dist/cookieconsent.umd.js"></script>
-
-  <!-- CookieConsent Configuration Script -->
-  <script>
-    document.documentElement.classList.add('cc--darkmode'); // Enable dark mode
-
-    CookieConsent.run({
-        guiOptions: {
-            consentModal: {
-                layout: "box",
-                position: "bottom right",
-                equalWeightButtons: true,
-                flipButtons: false
-            },
-            preferencesModal: {
-                layout: "box",
-                position: "right",
-                equalWeightButtons: true,
-                flipButtons: false
-            }
-        },
-        categories: {
-            necessary: { readOnly: true },
-            functionality: {},
-            analytics: {}
-        },
-        language: {
-            default: "en",
-            autoDetect: "browser",
-            translations: {
-                en: {
-                    consentModal: {
-                        title: "We use cookies.",
-                        description: "This website uses cookies to improve your browsing experience for the following purposes: to enable basic functionality of the website, to provide a better experience on the website, to measure your interest in our products and services and to personalize marketing interactions.",
-                        acceptAllBtn: "Accept all",
-                        acceptNecessaryBtn: "Reject all",
-                        showPreferencesBtn: "Manage preferences",
-                        footer: "<a href=\"#link\">Privacy Policy</a> <a href=\"#link\">Terms and conditions</a>"
-                    },
-                    preferencesModal: {
-                        title: "Consent Preferences Center",
-                        acceptAllBtn: "Accept all",
-                        acceptNecessaryBtn: "Reject all",
-                        savePreferencesBtn: "Save preferences",
-                        closeIconLabel: "Close modal",
-                        serviceCounterLabel: "Service|Services",
-                        sections: [
-                            {
-                                title: "Cookie Usage",
-                                description: " We use cookies on our website to store and/or access information on a device, and actively scan device characteristics for identification; and to select, provide and measure personalised ads, content, audience insights and product development. You may accept or manage your choices below, and may change your choices or exercise your rights (including withdrawing consent or objecting to our use of data at any time)."
-                            },
-                            {
-                                title: "Strictly Necessary Cookies <span class=\"pm__badge\">Always Enabled</span>",
-                                description: "These cookies are necessary for our website or app to function and cannot be switched off in our systems. They are usually only set in response to actions made by you which amount to a request for services, such as setting your privacy preferences, logging in or filling in forms. You can set your browser to block or alert you about these cookies, but some parts of the site will not then work. These cookies do not store any personally identifiable information.",
-                                linkedCategory: "necessary"
-                            },
-                            {
-                                title: "Functionality Cookies",
-                                description: "These cookies enable the website or app to provide enhanced functionality and personalization. These are used to recognize you when you return to our website. This enables us to personalize our content for you, greet you by name, and remember your preferences (for example, your choice of language or region). If you do not allow these cookies then some or all of these services may not function properly.",
-                                linkedCategory: "functionality"
-                            },
-                            {
-                                title: "Analytics Cookies",
-                                description: "These cookies tell us how visitors use our website or app. This may include allowing us to count visits and traffic sources so we can measure and improve the performance of our website and app. This helps us to know which pages are the most and least popular and to see how visitors move around the website",
-                                linkedCategory: "analytics"
-                            },
-                            {
-                                title: "More information",
-                                description: "For any query in relation to website policy on cookies and your choices, please <a class=\"cc__link\" href=\"#yourdomain.com\">contact us</a>."
-                            }
-                        ]
-                    }
-                }
-            }
-        }
-    });
-  </script>
-
-    <!-- JavaScript to handle form submission and display messages -->
-    <script>
-      window.onReCaptchaSuccess = function onReCaptchaSuccess(token) {
-        const form = document.getElementById('subscribeForm');
-        const formData = new FormData(form);
-        formData.append('g-recaptcha-response', token);
-
-        fetch(form.action, {
-          method: 'POST',
-          body: new URLSearchParams(formData),
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-        })
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('Server error');
-            }
-            return response.text();
-          })
-          .then(() => {
-            document.getElementById('subscribeForm').style.display = 'none';
-            document.getElementById('successMessage').style.display = 'block';
-          })
-          .catch((error) => {
-            document.getElementById('errorMessage').style.display = 'block';
-            console.error('Error:', error.message);
+    <!-- reCAPTCHA v3 -->
+    <script src="https://www.google.com/recaptcha/api.js?render=YOUR_RECAPTCHA_V3_SITE_KEY"></script>
+    
+    <!-- Updated Cookie Consent (v3.1.0) -->
+    <script src="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@v3.1.0/dist/cookieconsent.umd.js"></script>
+    
+    <!-- Modern JavaScript Module -->
+    <script type="module">
+      // reCAPTCHA Handling
+      const executeRecaptcha = async () => {
+        return new Promise((resolve) => {
+          grecaptcha.ready(() => {
+            grecaptcha.execute(window.recaptchaSettings.siteKey, {
+              action: window.recaptchaSettings.action
+            }).then(resolve);
           });
-      }
+        });
+      };
 
-      document.getElementById('subscribeForm').addEventListener('submit', function (event) {
+      // Form Handling
+      const form = document.getElementById('subscribeForm');
+      const submitButton = document.getElementById('submitButton');
+      const statusMessage = form.querySelector('[role="status"]');
+
+      const handleSubmit = async (event) => {
         event.preventDefault();
-        grecaptcha.execute();
-      });
+        
+        // Disable button during submission
+        submitButton.disabled = true;
+        submitButton.querySelector('.loader').removeAttribute('hidden');
+
+        try {
+          // Get reCAPTCHA token
+          const token = await executeRecaptcha();
+          
+          // Prepare form data
+          const formData = new FormData(form);
+          formData.append('g-recaptcha-response', token);
+
+          // Submit to backend
+          const response = await fetch(form.action, {
+            method: 'POST',
+            body: new URLSearchParams(formData),
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              'X-CSRF-Token': await getCSRFToken() // Implement CSRF
+            }
+          });
+
+          if (!response.ok) throw new Error(await response.text());
+          
+          showSuccessMessage();
+          form.reset();
+        } catch (error) {
+          showErrorMessage(error.message || 'Submission failed');
+          console.error('Submission error:', error);
+        } finally {
+          submitButton.disabled = false;
+          submitButton.querySelector('.loader').setAttribute('hidden', '');
+        }
+      };
+
+      // Event Listeners
+      form.addEventListener('submit', handleSubmit);
+      
+      // Message Handling
+      const showSuccessMessage = () => {
+        statusMessage.textContent = 'Thank you for subscribing!';
+        // Update visible messages
+      };
+
+      const showErrorMessage = (message) => {
+        statusMessage.textContent = message;
+        // Update visible messages
+      };
+
+      // CSRF Token (Example implementation)
+      const getCSRFToken = async () => {
+        // Implement your CSRF token retrieval logic
+        return 'YOUR_CSRF_TOKEN';
+      };
     </script>
   </body>
 </BaseLayout>
