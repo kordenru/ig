@@ -17,7 +17,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     <link rel="stylesheet" href="/assets/css/cookieconsent.css">
     
     <!-- reCAPTCHA -->
-<script src="https://www.google.com/recaptcha/api.js?render=6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB" async defer></script>
+<script src="https://www.google.com/recaptcha/enterprise.js?render=6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB"></script>
     
     <style>
       .success-message, .error-message {
@@ -175,34 +175,29 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById("subscribeForm");
 
-    form.addEventListener("submit", async function (event) {
-        event.preventDefault(); // Prevent form submission
+    form.addEventListener("submit", function (event) {
+        event.preventDefault(); // Prevent default form submission
 
-        if (typeof grecaptcha !== "undefined" && grecaptcha.execute) {
-            grecaptcha.ready(async function () {
-                try {
-                    const token = await grecaptcha.execute('6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB', { action: 'submit' });
+        grecaptcha.enterprise.ready(async () => {
+            try {
+                const token = await grecaptcha.enterprise.execute('6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB', { action: 'submit' });
 
-                    if (!token) {
-                        console.error("Failed to retrieve reCAPTCHA token.");
-                        return;
-                    }
-
-                    console.log("reCAPTCHA token:", token); // Debugging
-
-                    // Append token to the form and submit
-                    const formData = new FormData(form);
-                    formData.append("g-recaptcha-response", token);
-
-                    submitForm(formData);
-
-                } catch (error) {
-                    console.error("Error executing reCAPTCHA:", error);
+                if (!token) {
+                    console.error("Failed to retrieve reCAPTCHA token.");
+                    return;
                 }
-            });
-        } else {
-            console.error("reCAPTCHA is not available yet.");
-        }
+
+                console.log("reCAPTCHA token:", token); // Debugging
+
+                // Append token to the form and submit
+                const formData = new FormData(form);
+                formData.append("g-recaptcha-response", token);
+
+                submitForm(formData);
+            } catch (error) {
+                console.error("Error executing reCAPTCHA:", error);
+            }
+        });
     });
 
     function submitForm(formData) {
