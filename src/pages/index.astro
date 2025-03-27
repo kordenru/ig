@@ -172,21 +172,44 @@ import BaseLayout from "../layouts/BaseLayout.astro";
             });
 
             // Get reCAPTCHA token
-           document.addEventListener("DOMContentLoaded", function () {
-    if (typeof grecaptcha !== "undefined") {
-        grecaptcha.ready(async function () {
-            try {
-                const token = await grecaptcha.execute('6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB', {
-                    action: 'submit'
-                });
-                console.log("reCAPTCHA token:", token);
-                // Attach token to form and submit
-            } catch (error) {
-                console.error("reCAPTCHA error:", error);
-            }
-        });
-    } else {
-        console.error("reCAPTCHA is not loaded.");
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("subscribeForm");
+
+    form.addEventListener("submit", async function (event) {
+        event.preventDefault(); // Prevent default form submission
+
+        if (typeof grecaptcha !== "undefined") {
+            grecaptcha.ready(async function () {
+                try {
+                    // Get reCAPTCHA token
+                    const token = await grecaptcha.execute('6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB', { action: 'submit' });
+
+                    console.log("reCAPTCHA token:", token); // Debugging: Ensure token is generated
+
+                    // Append token to form data (if sending via AJAX)
+                    const formData = new FormData(form);
+                    formData.append("g-recaptcha-response", token);
+
+                    // Send the form data (Example: AJAX request)
+                    submitForm(formData);
+
+                } catch (error) {
+                    console.error("reCAPTCHA Error:", error);
+                }
+            });
+        } else {
+            console.error("reCAPTCHA not loaded.");
+        }
+    });
+
+    function submitForm(formData) {
+        fetch("your-server-endpoint", {
+            method: "POST",
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => console.log("Form submitted successfully!", data))
+        .catch(error => console.error("Form submission error:", error));
     }
 });
 
