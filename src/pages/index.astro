@@ -36,20 +36,20 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         </p>
       </div>
 
-      <!-- Netlify Form Section -->
+      <!-- Form Section -->
       <div class="div8">
         <form 
           name="subscribe"
           method="POST"
+          action="/api/subscribe"
+          class="subscribe-form"
           netlify
           netlify-honeypot="bot-field"
-          class="subscribe-form"
-          action="/?form_submitted=true#form"
         >
-          <!-- Required Netlify Fields -->
+          <!-- Hidden Netlify Fields -->
           <input type="hidden" name="form-name" value="subscribe" />
-          <div style="display: none;">
-            <label>Don't fill this out: <input name="bot-field" /></label>
+          <div style="display:none">
+            <input name="bot-field" />
           </div>
           
           <!-- Email Input -->
@@ -61,6 +61,9 @@ import BaseLayout from "../layouts/BaseLayout.astro";
             required 
           />
           
+          <!-- reCAPTCHA -->
+          <div class="g-recaptcha" data-sitekey="6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB"></div>
+          
           <!-- Submit Button -->
           <button type="submit">Notify Me</button>
         </form>
@@ -69,6 +72,12 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         <div id="successMessage" class="success-message" style="display: none;">
           <h2>Thank you for subscribing!</h2>
           <p>We will notify you when our website launches.</p>
+        </div>
+
+        <!-- Error Message -->
+        <div id="errorMessage" class="error-message" style="display: none;">
+          <h2>Submission Error</h2>
+          <p>Please try again later.</p>
         </div>
       </div>
 
@@ -95,19 +104,57 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       </div>
     </div>
 
+    <!-- reCAPTCHA Script -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
     <!-- Form Handling Script -->
     <script>
       document.addEventListener('DOMContentLoaded', () => {
-        // Check for successful form submission
-        const params = new URLSearchParams(window.location.search);
         const form = document.querySelector('.subscribe-form');
         const successMsg = document.getElementById('successMessage');
-
-        if (params.has('form_submitted')) {
-          if (form) form.style.display = 'none';
-          if (successMsg) successMsg.style.display = 'block';
-          // Clean URL without reloading
-          window.history.replaceState({}, '', window.location.pathname);
+        const errorMsg = document.getElementById('errorMessage');
+        
+        // Handle form submission
+        if (form) {
+          form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const button = form.querySelector('button');
+            const originalText = button.textContent;
+            
+            // Show loading state
+            button.disabled = true;
+            button.textContent = 'Sending...';
+            
+            try {
+              const formData = new FormData(form);
+              
+              // Add reCAPTCHA response
+              const recaptchaResponse = grecaptcha.getResponse();
+              if (!recaptchaResponse) {
+                throw new Error('Please complete the reCAPTCHA');
+              }
+              formData.append('g-recaptcha-response', recaptchaResponse);
+              
+              const response = await fetch(form.action, {
+                method: 'POST',
+                body: formData
+              });
+              
+              if (response.ok) {
+                form.style.display = 'none';
+                successMsg.style.display = 'block';
+              } else {
+                throw new Error('Submission failed');
+              }
+            } catch (error) {
+              errorMsg.style.display = 'block';
+              console.error('Error:', error);
+            } finally {
+              button.disabled = false;
+              button.textContent = originalText;
+              grecaptcha.reset();
+            }
+          });
         }
       });
     </script>
