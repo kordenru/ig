@@ -8,11 +8,62 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     <title>Iana Glushach - Bonsai and Ceramics</title>
     <!-- Load reCAPTCHA v3 -->
     <script src="https://www.google.com/recaptcha/api.js?render=6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB"></script>
+    <style>
+      .success-message, .error-message {
+        display: none;
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 5px;
+        animation: fadeIn 0.5s ease-out forwards;
+      }
+      .success-message {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+      .error-message {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      #submitButton[disabled] {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+    </style>
   </head>
 
   <body>
     <div class="parent">
-      <!-- [Previous content remains unchanged until form section] -->
+      <!-- Logo and Text Block -->
+      <div class="div2">
+        <div class="logo-container">
+          <img src="/assets/icons/ig-logo.svg" alt="Company Logo" class="logo-image" />
+        </div>
+        <div class="text-container">
+          <div class="text-block">
+            <h2>IANA GLUSHACH</h2>
+            <hr class="separator-line" />
+            <p class="b-c-text">Bonsai and Ceramics</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- "We Are Coming Soon" -->
+      <div class="div6">
+        <h2>Our new website is on its way!</h2>
+      </div>
+
+      <!-- Tagline -->
+      <div class="div7">
+        <p class="tagline">We're putting the final touches in place, and we can't wait to share it with you.<br>
+          In the meantime, visit our <a href="https://www.etsy.com/shop/IGBonsaiCeramics" target="_blank" class="etsy-store-link">Etsy Store.</a>
+        </p>
+      </div>
 
       <!-- Form Section -->
       <div class="div8">
@@ -32,77 +83,185 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         </form>
 
         <!-- Success Message -->
-        <div id="successMessage" class="success-message" style="display: none;">
+        <div id="successMessage" class="success-message">
           <h2>Thank you for subscribing!</h2>
           <p>We will notify you when our website launches.</p>
         </div>
 
         <!-- Error Message -->
-        <div id="errorMessage" class="error-message" style="display: none;">
+        <div id="errorMessage" class="error-message">
           <h2>Submission Error</h2>
           <p id="errorText">Please try again later.</p>
         </div>
       </div>
 
-      <!-- [Rest of content remains unchanged] -->
+      <!-- Follow us section -->
+      <div class="div9">
+        <h3>Follow us on</h3>
+      </div>
+      <div class="div10">
+        <div class="social-icons">
+          <a href="https://www.instagram.com/ig_bonsai_ceramics/" target="_blank" aria-label="Instagram">
+            <img src="/assets/icons/insta.png" alt="Instagram" />
+          </a>
+          <a href="https://www.facebook.com/IGbonsaiCeramics/" target="_blank" aria-label="Facebook">
+            <img src="/assets/icons/facebook.png" alt="Facebook" />
+          </a>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="div13">
+        <footer>
+          2024 &copy; Iana Glushach Bonsai and Ceramics - All Rights Reserved
+        </footer>
+      </div>
     </div>
 
     <!-- Form Handling Script -->
     <script>
-      document.getElementById('subscribeForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const form = e.target;
+      document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('subscribeForm');
         const button = document.getElementById('submitButton');
         const successMsg = document.getElementById('successMessage');
         const errorMsg = document.getElementById('errorMessage');
         const errorText = document.getElementById('errorText');
         const emailInput = document.getElementById('emailInput');
         
-        // Reset messages
+        // Initially hide messages
         successMsg.style.display = 'none';
         errorMsg.style.display = 'none';
         
-        // Show loading state
-        button.disabled = true;
-        button.textContent = 'Sending...';
-        
-        try {
-          // Get reCAPTCHA token
-          const token = await grecaptcha.execute('6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB', { 
-            action: 'submit' 
-          });
-
-          // Submit form data
-          const response = await fetch('/api/subscribe', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              email: emailInput.value,
-              'g-recaptcha-response': token
-            })
-          });
-
-          const result = await response.json();
-
-          if (response.ok) {
-            form.style.display = 'none';
-            successMsg.style.display = 'block';
-          } else {
-            throw new Error(result.error || 'Submission failed');
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          
+          // Reset messages
+          successMsg.style.display = 'none';
+          errorMsg.style.display = 'none';
+          
+          // Validate email
+          if (!emailInput.value || !emailInput.checkValidity()) {
+            errorText.textContent = 'Please enter a valid email address';
+            errorMsg.style.display = 'block';
+            return;
           }
-        } catch (error) {
-          console.error('Error:', error);
-          errorText.textContent = error.message || 'Please try again later.';
-          errorMsg.style.display = 'block';
-        } finally {
-          button.disabled = false;
-          button.textContent = 'Notify Me';
-        }
+          
+          // Show loading state
+          button.disabled = true;
+          button.textContent = 'Sending...';
+          
+          try {
+            // Get reCAPTCHA token
+            const token = await grecaptcha.execute('6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB', { 
+              action: 'submit' 
+            });
+
+            // Submit form data
+            const response = await fetch('/api/subscribe', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                email: emailInput.value,
+                'g-recaptcha-response': token
+              })
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+              form.style.display = 'none';
+              successMsg.style.display = 'block';
+            } else {
+              throw new Error(result.error || 'Submission failed');
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            errorText.textContent = error.message || 'Please try again later.';
+            errorMsg.style.display = 'block';
+          } finally {
+            button.disabled = false;
+            button.textContent = 'Notify Me';
+          }
+        });
       });
     </script>
 
-    <!-- [Keep existing Cookie Consent script] -->
+    <!-- Cookie Consent -->
+    <script src="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.0.1/dist/cookieconsent.umd.js"></script>
+    <script>
+      document.documentElement.classList.add('cc--darkmode');
+      CookieConsent.run({
+        guiOptions: {
+          consentModal: {
+            layout: "box",
+            position: "bottom right",
+            equalWeightButtons: true,
+            flipButtons: false
+          },
+          preferencesModal: {
+            layout: "box",
+            position: "right",
+            equalWeightButtons: true,
+            flipButtons: false
+          }
+        },
+        categories: {
+          necessary: { readOnly: true },
+          functionality: {},
+          analytics: {}
+        },
+        language: {
+          default: "en",
+          autoDetect: "browser",
+          translations: {
+            en: {
+              consentModal: {
+                title: "We use cookies.",
+                description: "This website uses cookies to improve your browsing experience...",
+                acceptAllBtn: "Accept all",
+                acceptNecessaryBtn: "Reject all",
+                showPreferencesBtn: "Manage preferences",
+                footer: "<a href=\"#link\">Privacy Policy</a> <a href=\"#link\">Terms and conditions</a>"
+              },
+              preferencesModal: {
+                title: "Consent Preferences Center",
+                acceptAllBtn: "Accept all",
+                acceptNecessaryBtn: "Reject all",
+                savePreferencesBtn: "Save preferences",
+                closeIconLabel: "Close modal",
+                serviceCounterLabel: "Service|Services",
+                sections: [
+                  {
+                    title: "Cookie Usage",
+                    description: "We use cookies on our website..."
+                  },
+                  {
+                    title: "Strictly Necessary Cookies <span class=\"pm__badge\">Always Enabled</span>",
+                    description: "These cookies are necessary...",
+                    linkedCategory: "necessary"
+                  },
+                  {
+                    title: "Functionality Cookies",
+                    description: "These cookies enable...",
+                    linkedCategory: "functionality"
+                  },
+                  {
+                    title: "Analytics Cookies",
+                    description: "These cookies tell us...",
+                    linkedCategory: "analytics"
+                  },
+                  {
+                    title: "More information",
+                    description: "For any query... <a class=\"cc__link\" href=\"#yourdomain.com\">contact us</a>."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      });
+    </script>
   </body>
 </BaseLayout>
