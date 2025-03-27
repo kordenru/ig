@@ -16,21 +16,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     <!-- Stylesheet -->
     <link rel="stylesheet" href="/assets/css/cookieconsent.css">
     
-    <!-- reCAPTCHA with proper loading -->
-    <script>
-      // Create a promise to track reCAPTCHA loading
-      window.recaptchaReady = new Promise((resolve) => {
-        window.onRecaptchaLoad = function() {
-          console.log('reCAPTCHA loaded successfully');
-          resolve();
-        };
-      });
-    </script>
-    <script 
-      src="https://www.google.com/recaptcha/enterprise.js?render=6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB&onload=onRecaptchaLoad" 
-      async 
-      defer
-    ></script>
+    <!-- reCAPTCHA v3 -->
+    <script src="https://www.google.com/recaptcha/api.js?render=6LcOjgErAAAAAN71A6XJkkhck11y9eE1XQlf8Lm0"></script>
     
     <style>
       .success-message, .error-message {
@@ -101,7 +88,15 @@ import BaseLayout from "../layouts/BaseLayout.astro";
             required 
           />
           
-          <button type="submit" id="submitButton">Notify Me</button>
+          <button 
+            id="submitButton"
+            class="g-recaptcha"
+            data-sitekey="6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB"
+            data-callback="onSubmit"
+            data-action="submit"
+          >
+            Notify Me
+          </button>
         </form>
 
         <!-- Success Message -->
@@ -142,78 +137,59 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
     <!-- Form Handling Script -->
     <script>
-      document.addEventListener('DOMContentLoaded', () => {
+      // reCAPTCHA callback function
+      function onSubmit(token) {
         const form = document.getElementById('subscribeForm');
         const button = document.getElementById('submitButton');
         const successMsg = document.getElementById('successMessage');
         const errorMsg = document.getElementById('errorMessage');
-        const errorText = document.getElementById('errorText');
-        const emailInput = document.getElementById('emailInput');
         
-        // Initialize messages as hidden
-        successMsg.style.display = 'none';
-        errorMsg.style.display = 'none';
+        // Show loading state
+        button.disabled = true;
+        button.textContent = 'Sending...';
         
-        form.addEventListener('submit', async (e) => {
+        // Prepare form data
+        const formData = new FormData(form);
+        formData.append('g-recaptcha-response', token);
+        
+        // Submit form
+        fetch('/api/subscribe', {
+          method: 'POST',
+          body: new URLSearchParams(formData),
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Submission failed');
+          }
+          form.style.display = 'none';
+          successMsg.style.display = 'block';
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          errorMsg.style.display = 'block';
+        })
+        .finally(() => {
+          button.disabled = false;
+          button.textContent = 'Notify Me';
+        });
+      }
+      
+      // Programmatic alternative
+      document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('subscribeForm');
+        const button = document.getElementById('submitButton');
+        
+        // Optional: Programmatic handling
+        form.addEventListener('submit', function(e) {
           e.preventDefault();
-          
-          // Reset messages
-          successMsg.style.display = 'none';
-          errorMsg.style.display = 'none';
-          
-          // Validate email
-          if (!emailInput.value || !emailInput.checkValidity()) {
-            errorText.textContent = 'Please enter a valid email address';
-            errorMsg.style.display = 'block';
-            return;
-          }
-          
-          // Show loading state
-          button.disabled = true;
-          button.textContent = 'Sending...';
-          
-          try {
-            // Wait for reCAPTCHA to be fully loaded
-            await window.recaptchaReady;
-            
-            // Verify grecaptcha exists and has execute method
-            if (!window.grecaptcha || typeof window.grecaptcha.execute !== 'function') {
-              throw new Error('Security verification failed to load. Please refresh the page.');
-            }
-
-            // Get reCAPTCHA token
-            const token = await window.grecaptcha.execute(
-              '6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB', 
-              { action: 'submit' }
-            );
-
-            // Submit form data
-            const response = await fetch('/api/subscribe', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                email: emailInput.value,
-                'g-recaptcha-response': token
-              })
-            });
-
-            if (!response.ok) {
-              const error = await response.json();
-              throw new Error(error.error || 'Submission failed');
-            }
-
-            form.style.display = 'none';
-            successMsg.style.display = 'block';
-          } catch (error) {
-            console.error('Error:', error);
-            errorText.textContent = error.message || 'An error occurred. Please try again.';
-            errorMsg.style.display = 'block';
-          } finally {
-            button.disabled = false;
-            button.textContent = 'Notify Me';
-          }
+          grecaptcha.ready(() => {
+            grecaptcha.execute('6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB', {
+              action: 'submit'
+            }).then(onSubmit);
+          });
         });
       });
     </script>
