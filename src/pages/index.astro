@@ -8,99 +8,141 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   </head>
 
   <body>
-    <!-- Keep all your existing body structure -->
     <div class="parent">
-      <!-- ... all your existing content ... -->
+      <!-- Logo and Text Block -->
+      <div class="div2">
+        <div class="logo-container">
+          <img src="/assets/icons/ig-logo.svg" alt="Company Logo" class="logo-image" />
+        </div>
+        <div class="text-container">
+          <div class="text-block">
+            <h2>IANA GLUSHACH</h2>
+            <hr class="separator-line" />
+            <p class="b-c-text">Bonsai and Ceramics</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- "We Are Coming Soon" -->
+      <div class="div6">
+        <h2>Our new website is on its way!</h2>
+      </div>
+
+      <!-- Tagline -->
+      <div class="div7">
+        <p class="tagline">We’re putting the final touches in place, and we can’t wait to share it with you.<br>
+          In the meantime, visit our <a href="https://www.etsy.com/shop/IGBonsaiCeramics" target="_blank" class="etsy-store-link">Etsy Store.</a>
+        </p>
+      </div>
 
       <!-- Subscription form -->
       <div class="div8">
         <form id="subscribeForm" class="subscribe-form">
-          <input 
-            type="email" 
-            name="email" 
-            placeholder="Enter your e-mail" 
-            aria-label="Email Input" 
-            required 
-          />
+          <input type="email" name="email" placeholder="Enter your e-mail" aria-label="Email Input" required />
           <button type="submit">Notify Me</button>
         </form>
 
-        <!-- Messages (keep these the same) -->
+        <!-- Success message -->
         <div id="successMessage" class="success-message" style="display: none;">
           <h2>Thank you for subscribing!</h2>
           <p>We will notify you when our website launches.</p>
         </div>
+
+        <!-- Error message -->
         <div id="errorMessage" class="error-message" style="display: none;">
           <h2>An error occurred!</h2>
           <p>Please try again later.</p>
         </div>
       </div>
 
-      <!-- ... rest of your content ... -->
+      <!-- Follow us section -->
+      <div class="div9">
+        <h3>Follow us on</h3>
+      </div>
+      <div class="div10">
+        <div class="social-icons">
+          <a href="https://www.instagram.com/ig_bonsai_ceramics/" target="_blank" aria-label="Instagram">
+            <img src="/assets/icons/insta.png" alt="Instagram" />
+          </a>
+          <a href="https://www.facebook.com/IGbonsaiCeramics/" target="_blank" aria-label="Facebook">
+            <img src="/assets/icons/facebook.png" alt="Facebook" />
+          </a>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="div13">
+        <footer>
+          2024 &copy; Iana Glushach Bonsai and Ceramics - All Rights Reserved
+        </footer>
+      </div>
     </div>
 
     <!-- reCAPTCHA v3 -->
     <script src="https://www.google.com/recaptcha/api.js?render=6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB"></script>
 
-    <!-- Cookie Consent (keep this the same) -->
+    <!-- Cookie Consent -->
+    <script src="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.0.1/dist/cookieconsent.umd.js"></script>
+    <script>
+      document.documentElement.classList.add('cc--darkmode');
+      CookieConsent.run({ /* ... keep existing cookie consent config ... */ });
+    </script>
 
-    <!-- Revised Form Handling -->
+    <!-- Updated Form Handling -->
     <script>
       document.getElementById('subscribeForm').addEventListener('submit', function(e) {
         e.preventDefault();
+        const form = this;
+        const button = form.querySelector('button');
         
         // Show loading state
-        const btn = this.querySelector('button');
-        btn.disabled = true;
-        btn.textContent = 'Sending...';
+        button.disabled = true;
+        button.innerHTML = 'Sending...';
 
         grecaptcha.ready(() => {
           grecaptcha.execute('6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB', { 
             action: 'submit' 
           }).then(token => {
-            // Simple fallback for testing
-            console.log('reCAPTCHA token:', token);
-            
-            // Simulate success for demonstration
+            // Simulate successful submission (remove this in production)
             setTimeout(() => {
-              this.style.display = 'none';
+              form.style.display = 'none';
               document.getElementById('successMessage').style.display = 'block';
-              btn.disabled = false;
-              btn.textContent = 'Notify Me';
+              button.disabled = false;
+              button.innerHTML = 'Notify Me';
             }, 1000);
 
-            /* For real use, uncomment and replace with:
+            /* For real backend integration:
             fetch('YOUR_ENDPOINT_HERE', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                email: this.email.value,
-                token: token
+                email: form.email.value,
+                'g-recaptcha-response': token
               })
             })
             .then(response => {
               if (response.ok) {
-                this.style.display = 'none';
+                form.style.display = 'none';
                 document.getElementById('successMessage').style.display = 'block';
               } else {
-                throw new Error('Failed');
+                throw new Error('Submission failed');
               }
             })
             .catch(error => {
               document.getElementById('errorMessage').style.display = 'block';
             })
             .finally(() => {
-              btn.disabled = false;
-              btn.textContent = 'Notify Me';
+              button.disabled = false;
+              button.innerHTML = 'Notify Me';
             });
             */
           }).catch(error => {
             console.error('reCAPTCHA Error:', error);
             document.getElementById('errorMessage').style.display = 'block';
-            btn.disabled = false;
-            btn.textContent = 'Notify Me';
+            button.disabled = false;
+            button.innerHTML = 'Notify Me';
           });
         });
       });
