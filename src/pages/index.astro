@@ -6,8 +6,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   <head>
     <link rel="stylesheet" href="/assets/css/cookieconsent.css">
     <title>Iana Glushach - Bonsai and Ceramics</title>
-    <!-- Netlify Identity for form detection -->
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
   </head>
 
   <body>
@@ -40,19 +38,19 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
       <!-- Netlify Form Section -->
       <div class="div8">
-        <!-- Main Form -->
         <form 
-          name="contact" 
-          method="POST" 
-          data-netlify="true"
+          name="subscribe"
+          method="POST"
           netlify
           netlify-honeypot="bot-field"
           class="subscribe-form"
           action="/?form_submitted=true#form"
         >
-          <!-- Netlify Required Fields -->
-          <input type="hidden" name="form-name" value="contact" />
-          <input type="text" name="bot-field" style="display: none;" />
+          <!-- Required Netlify Fields -->
+          <input type="hidden" name="form-name" value="subscribe" />
+          <div style="display: none;">
+            <label>Don't fill this out: <input name="bot-field" /></label>
+          </div>
           
           <!-- Email Input -->
           <input 
@@ -71,12 +69,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         <div id="successMessage" class="success-message" style="display: none;">
           <h2>Thank you for subscribing!</h2>
           <p>We will notify you when our website launches.</p>
-        </div>
-
-        <!-- Error Message -->
-        <div id="errorMessage" class="error-message" style="display: none;">
-          <h2>Submission Error</h2>
-          <p>Please try again later.</p>
         </div>
       </div>
 
@@ -106,27 +98,16 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     <!-- Form Handling Script -->
     <script>
       document.addEventListener('DOMContentLoaded', () => {
-        // Handle form submission feedback
+        // Check for successful form submission
         const params = new URLSearchParams(window.location.search);
-        const form = document.querySelector('form');
+        const form = document.querySelector('.subscribe-form');
         const successMsg = document.getElementById('successMessage');
-        const errorMsg = document.getElementById('errorMessage');
 
         if (params.has('form_submitted')) {
-          form.style.display = 'none';
-          successMsg.style.display = 'block';
-          window.history.replaceState({}, document.title, window.location.pathname);
-        }
-
-        // Enhanced Netlify Identity handling
-        if (window.netlifyIdentity) {
-          window.netlifyIdentity.on('init', (user) => {
-            if (!user) {
-              window.netlifyIdentity.on('login', () => {
-                document.location.href = '/admin/';
-              });
-            }
-          });
+          if (form) form.style.display = 'none';
+          if (successMsg) successMsg.style.display = 'block';
+          // Clean URL without reloading
+          window.history.replaceState({}, '', window.location.pathname);
         }
       });
     </script>
