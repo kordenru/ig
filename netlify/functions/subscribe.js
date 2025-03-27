@@ -1,15 +1,16 @@
-import nodemailer from 'nodemailer';
-import fetch from 'node-fetch';
+const nodemailer = require('nodemailer');
+const fetch = require('node-fetch');
 
-export const handler = async (event) => {
-  // Cors headers for cross-origin support
+exports.handler = async (event) => {
+  // Set CORS headers
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS'
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Content-Type': 'application/json'
   };
 
-  // Handle preflight requests
+  // Handle preflight request
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 200,
@@ -18,7 +19,7 @@ export const handler = async (event) => {
     };
   }
 
-  // Verify request method
+  // Only allow POST requests
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
@@ -31,31 +32,23 @@ export const handler = async (event) => {
     // Parse request body
     const { email, 'g-recaptcha-response': token } = JSON.parse(event.body);
 
-    // Validate email
-    if (!isValidEmail(email)) {
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
       return {
         statusCode: 400,
         headers,
-        body: JSON.stringify({ error: 'Invalid email address' })
+        body: JSON.stringify({ error: 'Invalid email format' })
       };
     }
 
-    // Verify reCAPTCHA
+    // Verify reCAPTCHA token
     const recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY;
-    if (!recaptchaSecret) {
-      return {
-        statusCode: 500,
-        headers,
-        body: JSON.stringify({ error: 'reCAPTCHA secret key not configured' })
-      };
-    }
-
     const verifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${recaptchaSecret}&response=${token}`;
     
     const recaptchaResponse = await fetch(verifyUrl);
     const recaptchaData = await recaptchaResponse.json();
 
-    // Validate reCAPTCHA
     if (!recaptchaData.success || recaptchaData.score < 0.5) {
       return {
         statusCode: 400,
@@ -64,62 +57,36 @@ export const handler = async (event) => {
       };
     }
 
-    // Configure email transport
+    // Configure email transporter
     const transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 587,
-      secure: false, // Use TLS
+      service: 'gmail',
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
       }
     });
 
-    // Send notification email to admin
+    // Send notification email
     await transporter.sendMail({
       from: `"Website Subscription" <${process.env.EMAIL_USER}>`,
       to: process.env.EMAIL_USER,
-      subject: 'New Website Subscription',
-      html: `
-        <h1>New Subscriber!</h1>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Subscribed at:</strong> ${new Date().toLocaleString()}</p>
-      `
+      subject: 'New Website Subscriber',
+      text: `You have a new subscriber: ${email}`,
+      html: `<p>You have a new subscriber: <strong>${email}</strong></p>`
     });
-
-    // Optional: Save subscriber (you'd implement this based on your storage method)
-    await saveSubscriber(email);
 
     return {
       statusCode: 200,
       headers,
-      body: JSON.stringify({ 
-        message: 'Subscription successful', 
-        email: email 
-      })
+      body: JSON.stringify({ message: 'Subscription successful' })
     };
+
   } catch (error) {
-    console.error('Subscription Error:', error);
+    console.error('Error processing subscription:', error);
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ 
-        error: 'Subscription failed', 
-        details: error.message 
-      })
+      body: JSON.stringify({ error: 'Internal server error' })
     };
   }
 };
-
-// Email validation function
-function isValidEmail(email) {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-}
-
-// Placeholder for subscriber saving logic
-async function saveSubscriber(email) {
-  // Implement your subscriber storage method here
-  // This could be writing to a file, saving to a database, etc.
-  console.log(`Saving subscriber: ${email}`);
-}
