@@ -16,8 +16,21 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     <!-- Stylesheet -->
     <link rel="stylesheet" href="/assets/css/cookieconsent.css">
     
-    <!-- reCAPTCHA -->
-<script src="https://www.google.com/recaptcha/enterprise.js?render=6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB"></script>
+    <!-- reCAPTCHA with proper loading -->
+    <script>
+      // Create a promise to track reCAPTCHA loading
+      window.recaptchaReady = new Promise((resolve) => {
+        window.onRecaptchaLoad = function() {
+          console.log('reCAPTCHA loaded successfully');
+          resolve();
+        };
+      });
+    </script>
+    <script 
+      src="https://www.google.com/recaptcha/enterprise.js?render=6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB&onload=onRecaptchaLoad" 
+      async 
+      defer
+    ></script>
     
     <style>
       .success-message, .error-message {
@@ -160,57 +173,19 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           button.textContent = 'Sending...';
           
           try {
-            // Wait for reCAPTCHA to load
-            await new Promise((resolve) => {
-              if (window.grecaptcha) return resolve();
-              const interval = setInterval(() => {
-                if (window.grecaptcha) {
-                  clearInterval(interval);
-                  resolve();
-                }
-              }, 100);
-            });
+            // Wait for reCAPTCHA to be fully loaded
+            await window.recaptchaReady;
+            
+            // Verify grecaptcha exists and has execute method
+            if (!window.grecaptcha || typeof window.grecaptcha.execute !== 'function') {
+              throw new Error('Security verification failed to load. Please refresh the page.');
+            }
 
             // Get reCAPTCHA token
-document.addEventListener("DOMContentLoaded", function () {
-    const form = document.getElementById("subscribeForm");
-
-    form.addEventListener("submit", function (event) {
-        event.preventDefault(); // Prevent default form submission
-
-        grecaptcha.enterprise.ready(async () => {
-            try {
-                const token = await grecaptcha.enterprise.execute('6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB', { action: 'submit' });
-
-                if (!token) {
-                    console.error("Failed to retrieve reCAPTCHA token.");
-                    return;
-                }
-
-                console.log("reCAPTCHA token:", token); // Debugging
-
-                // Append token to the form and submit
-                const formData = new FormData(form);
-                formData.append("g-recaptcha-response", token);
-
-                submitForm(formData);
-            } catch (error) {
-                console.error("Error executing reCAPTCHA:", error);
-            }
-        });
-    });
-
-    function submitForm(formData) {
-        fetch("your-server-endpoint", {
-            method: "POST",
-            body: formData,
-        })
-        .then(response => response.json())
-        .then(data => console.log("Form submitted successfully!", data))
-        .catch(error => console.error("Form submission error:", error));
-    }
-});
-
+            const token = await window.grecaptcha.execute(
+              '6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB', 
+              { action: 'submit' }
+            );
 
             // Submit form data
             const response = await fetch('/api/subscribe', {
