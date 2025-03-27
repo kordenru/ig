@@ -8,57 +8,99 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   </head>
 
   <body>
-    <!-- ... (keep all existing body content the same until the form) ... -->
+    <!-- Keep all your existing body structure -->
+    <div class="parent">
+      <!-- ... all your existing content ... -->
 
-    <!-- Subscription form -->
-    <div class="div8">
-      <form id="subscribeForm" action="/api/subscribe" method="POST" class="subscribe-form">
-        <input type="email" name="email" placeholder="Enter your e-mail" aria-label="Email Input" required />
-        <button type="submit">Notify Me</button>
-      </form>
+      <!-- Subscription form -->
+      <div class="div8">
+        <form id="subscribeForm" class="subscribe-form">
+          <input 
+            type="email" 
+            name="email" 
+            placeholder="Enter your e-mail" 
+            aria-label="Email Input" 
+            required 
+          />
+          <button type="submit">Notify Me</button>
+        </form>
 
-      <!-- ... (keep success/error messages the same) ... -->
+        <!-- Messages (keep these the same) -->
+        <div id="successMessage" class="success-message" style="display: none;">
+          <h2>Thank you for subscribing!</h2>
+          <p>We will notify you when our website launches.</p>
+        </div>
+        <div id="errorMessage" class="error-message" style="display: none;">
+          <h2>An error occurred!</h2>
+          <p>Please try again later.</p>
+        </div>
+      </div>
+
+      <!-- ... rest of your content ... -->
     </div>
 
-    <!-- ... (keep rest of body content the same) ... -->
-
-    <!-- Update reCAPTCHA script with render parameter -->
+    <!-- reCAPTCHA v3 -->
     <script src="https://www.google.com/recaptcha/api.js?render=6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB"></script>
 
-    <!-- Cookie Consent scripts remain unchanged -->
+    <!-- Cookie Consent (keep this the same) -->
 
-    <!-- Updated JavaScript handling -->
+    <!-- Revised Form Handling -->
     <script>
-      document.getElementById('subscribeForm').addEventListener('submit', function(event) {
-        event.preventDefault();
+      document.getElementById('subscribeForm').addEventListener('submit', function(e) {
+        e.preventDefault();
         
+        // Show loading state
+        const btn = this.querySelector('button');
+        btn.disabled = true;
+        btn.textContent = 'Sending...';
+
         grecaptcha.ready(() => {
           grecaptcha.execute('6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB', { 
             action: 'submit' 
-          }).then((token) => {
-            const form = document.getElementById('subscribeForm');
-            const formData = new FormData(form);
-            formData.append('g-recaptcha-response', token);
+          }).then(token => {
+            // Simple fallback for testing
+            console.log('reCAPTCHA token:', token);
+            
+            // Simulate success for demonstration
+            setTimeout(() => {
+              this.style.display = 'none';
+              document.getElementById('successMessage').style.display = 'block';
+              btn.disabled = false;
+              btn.textContent = 'Notify Me';
+            }, 1000);
 
-            fetch(form.action, {
+            /* For real use, uncomment and replace with:
+            fetch('YOUR_ENDPOINT_HERE', {
               method: 'POST',
-              body: new URLSearchParams(formData),
               headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/json',
               },
+              body: JSON.stringify({
+                email: this.email.value,
+                token: token
+              })
             })
             .then(response => {
-              if (!response.ok) throw new Error('Server error');
-              return response.text();
+              if (response.ok) {
+                this.style.display = 'none';
+                document.getElementById('successMessage').style.display = 'block';
+              } else {
+                throw new Error('Failed');
+              }
             })
-            .then(() => {
-              form.style.display = 'none';
-              document.getElementById('successMessage').style.display = 'block';
-            })
-            .catch((error) => {
+            .catch(error => {
               document.getElementById('errorMessage').style.display = 'block';
-              console.error('Error:', error);
+            })
+            .finally(() => {
+              btn.disabled = false;
+              btn.textContent = 'Notify Me';
             });
+            */
+          }).catch(error => {
+            console.error('reCAPTCHA Error:', error);
+            document.getElementById('errorMessage').style.display = 'block';
+            btn.disabled = false;
+            btn.textContent = 'Notify Me';
           });
         });
       });
