@@ -91,11 +91,12 @@ exports.handler = async (event) => {
     };
 
   } catch (error) {
-    console.error('Error processing subscription:', error);
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({ error: 'Internal server error' })
+   console.error('Error processing subscription:', error.message); // Log the error message
+  console.error(error.stack); // Log the stack trace for more details
+  return {
+    statusCode: 500,
+    headers,
+    body: JSON.stringify({ error: 'Internal server error', message: error.message })
     };
   }
 };
