@@ -17,7 +17,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     <link rel="stylesheet" href="/assets/css/cookieconsent.css">
     
     <!-- reCAPTCHA v3 -->
-    <script src="https://www.google.com/recaptcha/api.js?render=6LcOjgErAAAAAN71A6XJkkhck11y9eE1XQlf8Lm0"></script>
+    <script src="https://www.google.com/recaptcha/api.js?render=6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB"></script>
     
     <style>
       .success-message, .error-message {
@@ -143,32 +143,37 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         const button = document.getElementById('submitButton');
         const successMsg = document.getElementById('successMessage');
         const errorMsg = document.getElementById('errorMessage');
+        const errorText = document.getElementById('errorText');
         
         // Show loading state
         button.disabled = true;
         button.textContent = 'Sending...';
         
         // Prepare form data
-        const formData = new FormData(form);
-        formData.append('g-recaptcha-response', token);
+        const formData = {
+          email: document.getElementById('emailInput').value,
+          'g-recaptcha-response': token
+        };
         
-        // Submit form
-        fetch('/api/subscribe', {
+        // Submit form with CORS headers
+        fetch('https://your-netlify-site.netlify.app/api/subscribe', {
           method: 'POST',
-          body: new URLSearchParams(formData),
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
           },
+          body: JSON.stringify(formData)
         })
         .then(response => {
           if (!response.ok) {
-            throw new Error('Submission failed');
+            return response.json().then(err => { throw err; });
           }
           form.style.display = 'none';
           successMsg.style.display = 'block';
         })
         .catch(error => {
           console.error('Error:', error);
+          errorText.textContent = error.error || 'An error occurred. Please try again.';
           errorMsg.style.display = 'block';
         })
         .finally(() => {
@@ -176,96 +181,85 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           button.textContent = 'Notify Me';
         });
       }
-      
-      // Programmatic alternative
-      document.addEventListener('DOMContentLoaded', () => {
-        const form = document.getElementById('subscribeForm');
-        const button = document.getElementById('submitButton');
-        
-        // Optional: Programmatic handling
-        form.addEventListener('submit', function(e) {
-          e.preventDefault();
-          grecaptcha.ready(() => {
-            grecaptcha.execute('6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB', {
-              action: 'submit'
-            }).then(onSubmit);
-          });
-        });
-      });
-    </script>
 
-    <!-- Cookie Consent -->
-    <script src="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.0.1/dist/cookieconsent.umd.js"></script>
-    <script>
-      document.documentElement.classList.add('cc--darkmode');
-      CookieConsent.run({
-        guiOptions: {
-          consentModal: {
-            layout: "box",
-            position: "bottom right",
-            equalWeightButtons: true,
-            flipButtons: false
-          },
-          preferencesModal: {
-            layout: "box",
-            position: "right",
-            equalWeightButtons: true,
-            flipButtons: false
-          }
-        },
-        categories: {
-          necessary: { readOnly: true },
-          functionality: {},
-          analytics: {}
-        },
-        language: {
-          default: "en",
-          autoDetect: "browser",
-          translations: {
-            en: {
-              consentModal: {
-                title: "We use cookies.",
-                description: "This website uses cookies to improve your browsing experience...",
-                acceptAllBtn: "Accept all",
-                acceptNecessaryBtn: "Reject all",
-                showPreferencesBtn: "Manage preferences",
-                footer: "<a href=\"#link\">Privacy Policy</a> <a href=\"#link\">Terms and conditions</a>"
+      // Cookie consent with error handling
+      document.addEventListener('DOMContentLoaded', () => {
+        try {
+          if (typeof CookieConsent !== 'undefined') {
+            document.documentElement.classList.add('cc--darkmode');
+            CookieConsent.run({
+              guiOptions: {
+                consentModal: {
+                  layout: "box",
+                  position: "bottom right",
+                  equalWeightButtons: true,
+                  flipButtons: false
+                },
+                preferencesModal: {
+                  layout: "box",
+                  position: "right",
+                  equalWeightButtons: true,
+                  flipButtons: false
+                }
               },
-              preferencesModal: {
-                title: "Consent Preferences Center",
-                acceptAllBtn: "Accept all",
-                acceptNecessaryBtn: "Reject all",
-                savePreferencesBtn: "Save preferences",
-                closeIconLabel: "Close modal",
-                serviceCounterLabel: "Service|Services",
-                sections: [
-                  {
-                    title: "Cookie Usage",
-                    description: "We use cookies on our website..."
-                  },
-                  {
-                    title: "Strictly Necessary Cookies <span class=\"pm__badge\">Always Enabled</span>",
-                    description: "These cookies are necessary...",
-                    linkedCategory: "necessary"
-                  },
-                  {
-                    title: "Functionality Cookies",
-                    description: "These cookies enable...",
-                    linkedCategory: "functionality"
-                  },
-                  {
-                    title: "Analytics Cookies",
-                    description: "These cookies tell us...",
-                    linkedCategory: "analytics"
-                  },
-                  {
-                    title: "More information",
-                    description: "For any query... <a class=\"cc__link\" href=\"#yourdomain.com\">contact us</a>."
+              categories: {
+                necessary: { readOnly: true },
+                functionality: {},
+                analytics: {}
+              },
+              language: {
+                default: "en",
+                autoDetect: "browser",
+                translations: {
+                  en: {
+                    consentModal: {
+                      title: "We use cookies.",
+                      description: "This website uses cookies to improve your browsing experience...",
+                      acceptAllBtn: "Accept all",
+                      acceptNecessaryBtn: "Reject all",
+                      showPreferencesBtn: "Manage preferences",
+                      footer: "<a href=\"#link\">Privacy Policy</a> <a href=\"#link\">Terms and conditions</a>"
+                    },
+                    preferencesModal: {
+                      title: "Consent Preferences Center",
+                      acceptAllBtn: "Accept all",
+                      acceptNecessaryBtn: "Reject all",
+                      savePreferencesBtn: "Save preferences",
+                      closeIconLabel: "Close modal",
+                      serviceCounterLabel: "Service|Services",
+                      sections: [
+                        {
+                          title: "Cookie Usage",
+                          description: "We use cookies on our website..."
+                        },
+                        {
+                          title: "Strictly Necessary Cookies <span class=\"pm__badge\">Always Enabled</span>",
+                          description: "These cookies are necessary...",
+                          linkedCategory: "necessary"
+                        },
+                        {
+                          title: "Functionality Cookies",
+                          description: "These cookies enable...",
+                          linkedCategory: "functionality"
+                        },
+                        {
+                          title: "Analytics Cookies",
+                          description: "These cookies tell us...",
+                          linkedCategory: "analytics"
+                        },
+                        {
+                          title: "More information",
+                          description: "For any query... <a class=\"cc__link\" href=\"#yourdomain.com\">contact us</a>."
+                        }
+                      ]
+                    }
                   }
-                ]
+                }
               }
-            }
+            });
           }
+        } catch (e) {
+          console.log('Cookie consent error:', e);
         }
       });
     </script>
