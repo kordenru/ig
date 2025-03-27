@@ -1,14 +1,23 @@
 const nodemailer = require('nodemailer');
-const fetch = require('node-fetch');
 
 exports.handler = async (event) => {
-  // Set CORS headers
+  // Set CORS headers - update with your actual domain
+  const allowedOrigins = [
+    'https://www.ianaglushach.com',
+    'https://ianaglushach.com'
+  ];
+  
+  const origin = event.headers.origin;
   const headers = {
-    'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Content-Type': 'application/json'
   };
+
+  // Add origin if it's in the allowed list
+  if (allowedOrigins.includes(origin)) {
+    headers['Access-Control-Allow-Origin'] = origin;
+  }
 
   // Handle preflight request
   if (event.httpMethod === 'OPTIONS') {
@@ -29,12 +38,12 @@ exports.handler = async (event) => {
   }
 
   try {
-    // Parse request body
-    const { email, 'g-recaptcha-response': token } = JSON.parse(event.body);
+    // Parse form data
+    const body = JSON.parse(event.body);
+    const { email, 'g-recaptcha-response': token } = body;
 
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    // Validate email
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return {
         statusCode: 400,
         headers,
@@ -42,7 +51,7 @@ exports.handler = async (event) => {
       };
     }
 
-    // Verify reCAPTCHA token
+    // Verify reCAPTCHA
     const recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY;
     const verifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${recaptchaSecret}&response=${token}`;
     
@@ -57,7 +66,7 @@ exports.handler = async (event) => {
       };
     }
 
-    // Configure email transporter
+    // Configure email transport
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -66,13 +75,13 @@ exports.handler = async (event) => {
       }
     });
 
-    // Send notification email
+    // Send email
     await transporter.sendMail({
       from: `"Website Subscription" <${process.env.EMAIL_USER}>`,
       to: process.env.EMAIL_USER,
       subject: 'New Website Subscriber',
-      text: `You have a new subscriber: ${email}`,
-      html: `<p>You have a new subscriber: <strong>${email}</strong></p>`
+      text: `New subscription from: ${email}`,
+      html: `<p>New subscription from: <strong>${email}</strong></p>`
     });
 
     return {
