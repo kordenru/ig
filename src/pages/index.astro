@@ -174,31 +174,37 @@ import BaseLayout from "../layouts/BaseLayout.astro";
             // Get reCAPTCHA token
 document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById("subscribeForm");
+    const submitButton = document.getElementById("submitButton");
 
     form.addEventListener("submit", async function (event) {
-        event.preventDefault(); // Prevent default form submission
+        event.preventDefault(); // Prevent form from submitting immediately
 
+        // Ensure reCAPTCHA is ready before executing
         if (typeof grecaptcha !== "undefined") {
             grecaptcha.ready(async function () {
                 try {
-                    // Get reCAPTCHA token
+                    // Fetch reCAPTCHA token
                     const token = await grecaptcha.execute('6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB', { action: 'submit' });
 
-                    console.log("reCAPTCHA token:", token); // Debugging: Ensure token is generated
+                    if (!token) {
+                        console.error("reCAPTCHA token was not generated.");
+                        return;
+                    }
 
-                    // Append token to form data (if sending via AJAX)
+                    console.log("reCAPTCHA token:", token); // Debugging
+
+                    // Append token to the form and submit
                     const formData = new FormData(form);
                     formData.append("g-recaptcha-response", token);
 
-                    // Send the form data (Example: AJAX request)
                     submitForm(formData);
 
                 } catch (error) {
-                    console.error("reCAPTCHA Error:", error);
+                    console.error("Error executing reCAPTCHA:", error);
                 }
             });
         } else {
-            console.error("reCAPTCHA not loaded.");
+            console.error("reCAPTCHA is not loaded yet.");
         }
     });
 
