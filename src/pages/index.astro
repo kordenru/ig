@@ -4,10 +4,27 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
 <BaseLayout>
   <head>
-    <link rel="stylesheet" href="/assets/css/cookieconsent.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iana Glushach - Bonsai and Ceramics</title>
-    <!-- Load reCAPTCHA v3 -->
-    <script src="https://www.google.com/recaptcha/api.js?render=6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB"></script>
+    
+    <!-- Preload Critical Assets -->
+    <link rel="preload" href="/assets/icons/ig-logo.svg" as="image">
+    <link rel="preload" href="/assets/icons/insta.png" as="image">
+    <link rel="preload" href="/assets/icons/facebook.png" as="image">
+    
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="/assets/css/cookieconsent.css">
+    
+    <!-- Preconnect to External Resources -->
+    <link rel="preconnect" href="https://www.google.com">
+    
+    <!-- reCAPTCHA -->
+    <script 
+      src="https://www.google.com/recaptcha/api.js?render={import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY}" 
+      defer
+    ></script>
+    
     <style>
       .success-message, .error-message {
         display: none;
@@ -42,33 +59,44 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       <!-- Logo and Text Block -->
       <div class="div2">
         <div class="logo-container">
-          <img src="/assets/icons/ig-logo.svg" alt="Company Logo" class="logo-image" />
+          <img 
+            src="/assets/icons/ig-logo.svg" 
+            alt="Iana Glushach Logo" 
+            class="logo-image" 
+            width="150" 
+            height="150"
+          />
         </div>
         <div class="text-container">
           <div class="text-block">
-            <h2>IANA GLUSHACH</h2>
+            <h1>IANA GLUSHACH</h1>
             <hr class="separator-line" />
             <p class="b-c-text">Bonsai and Ceramics</p>
           </div>
         </div>
       </div>
 
-      <!-- "We Are Coming Soon" -->
+      <!-- Coming Soon Section -->
       <div class="div6">
         <h2>Our new website is on its way!</h2>
       </div>
 
       <!-- Tagline -->
       <div class="div7">
-        <p class="tagline">We're putting the final touches in place, and we can't wait to share it with you.<br>
-          In the meantime, visit our <a href="https://www.etsy.com/shop/IGBonsaiCeramics" target="_blank" class="etsy-store-link">Etsy Store.</a>
+        <p class="tagline">
+          We're putting the final touches in place, and we can't wait to share it with you.<br>
+          In the meantime, visit our <a 
+            href="https://www.etsy.com/shop/IGBonsaiCeramics" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            class="etsy-store-link"
+          >Etsy Store</a>.
         </p>
       </div>
 
-      <!-- Form Section -->
+      <!-- Subscription Form Section -->
       <div class="div8">
         <form id="subscribeForm" class="subscribe-form">
-          <!-- Email Input -->
           <input 
             type="email" 
             name="email" 
@@ -76,36 +104,72 @@ import BaseLayout from "../layouts/BaseLayout.astro";
             placeholder="Enter your e-mail" 
             aria-label="Email Input" 
             required 
+            pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
           />
           
-          <!-- Submit Button -->
-          <button type="submit" id="submitButton">Notify Me</button>
+          <button 
+            type="submit" 
+            id="submitButton" 
+            aria-label="Subscribe Button"
+          >
+            Notify Me
+          </button>
         </form>
 
         <!-- Success Message -->
-        <div id="successMessage" class="success-message">
+        <div 
+          id="successMessage" 
+          class="success-message" 
+          role="alert" 
+          aria-live="polite"
+        >
           <h2>Thank you for subscribing!</h2>
           <p>We will notify you when our website launches.</p>
         </div>
 
         <!-- Error Message -->
-        <div id="errorMessage" class="error-message">
+        <div 
+          id="errorMessage" 
+          class="error-message" 
+          role="alert" 
+          aria-live="assertive"
+        >
           <h2>Submission Error</h2>
           <p id="errorText">Please try again later.</p>
         </div>
       </div>
 
-      <!-- Follow us section -->
+      <!-- Social Links -->
       <div class="div9">
         <h3>Follow us on</h3>
       </div>
       <div class="div10">
         <div class="social-icons">
-          <a href="https://www.instagram.com/ig_bonsai_ceramics/" target="_blank" aria-label="Instagram">
-            <img src="/assets/icons/insta.png" alt="Instagram" />
+          <a 
+            href="https://www.instagram.com/ig_bonsai_ceramics/" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            aria-label="Instagram"
+          >
+            <img 
+              src="/assets/icons/insta.png" 
+              alt="Instagram Icon" 
+              width="40" 
+              height="40"
+            />
           </a>
-          <a href="https://www.facebook.com/IGbonsaiCeramics/" target="_blank" aria-label="Facebook">
-            <img src="/assets/icons/facebook.png" alt="Facebook" />
+          <a 
+            href="https://www.facebook.com/IGbonsaiCeramics/" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            aria-label="Facebook"
+          >
+            <img 
+              src="/assets/icons/facebook.png" 
+              alt="Facebook Icon" 
+              width="40" 
+              height="40"
+            />
           </a>
         </div>
       </div>
@@ -113,7 +177,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       <!-- Footer -->
       <div class="div13">
         <footer>
-          2024 &copy; Iana Glushach Bonsai and Ceramics - All Rights Reserved
+          {new Date().getFullYear()} &copy; Iana Glushach Bonsai and Ceramics - All Rights Reserved
         </footer>
       </div>
     </div>
@@ -128,14 +192,14 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         const errorText = document.getElementById('errorText');
         const emailInput = document.getElementById('emailInput');
         
-        // Initially hide messages
+        // Reset messages on page load
         successMsg.style.display = 'none';
         errorMsg.style.display = 'none';
         
         form.addEventListener('submit', async (e) => {
           e.preventDefault();
           
-          // Reset messages
+          // Reset previous messages
           successMsg.style.display = 'none';
           errorMsg.style.display = 'none';
           
@@ -146,15 +210,16 @@ import BaseLayout from "../layouts/BaseLayout.astro";
             return;
           }
           
-          // Show loading state
+          // Disable button and show loading state
           button.disabled = true;
           button.textContent = 'Sending...';
           
           try {
             // Get reCAPTCHA token
-            const token = await grecaptcha.execute('6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB', { 
-              action: 'submit' 
-            });
+            const token = await grecaptcha.execute(
+              import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY, 
+              { action: 'submit' }
+            );
 
             // Submit form data
             const response = await fetch('/api/subscribe', {
@@ -177,8 +242,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
               throw new Error(result.error || 'Submission failed');
             }
           } catch (error) {
-            console.error('Error:', error);
-            errorText.textContent = error.message || 'Please try again later.';
+            console.error('Submission Error:', error);
+            errorText.textContent = error.message || 'An unexpected error occurred. Please try again.';
             errorMsg.style.display = 'block';
           } finally {
             button.disabled = false;
@@ -188,7 +253,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       });
     </script>
 
-    <!-- Cookie Consent -->
+    <!-- Cookie Consent Script -->
     <script src="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.0.1/dist/cookieconsent.umd.js"></script>
     <script>
       document.documentElement.classList.add('cc--darkmode');
@@ -219,11 +284,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
             en: {
               consentModal: {
                 title: "We use cookies.",
-                description: "This website uses cookies to improve your browsing experience...",
+                description: "This website uses cookies to improve your browsing experience and provide personalized content.",
                 acceptAllBtn: "Accept all",
                 acceptNecessaryBtn: "Reject all",
                 showPreferencesBtn: "Manage preferences",
-                footer: "<a href=\"#link\">Privacy Policy</a> <a href=\"#link\">Terms and conditions</a>"
+                footer: "<a href=\"/privacy-policy\">Privacy Policy</a> <a href=\"/terms\">Terms and conditions</a>"
               },
               preferencesModal: {
                 title: "Consent Preferences Center",
@@ -235,26 +300,22 @@ import BaseLayout from "../layouts/BaseLayout.astro";
                 sections: [
                   {
                     title: "Cookie Usage",
-                    description: "We use cookies on our website..."
+                    description: "We use cookies to enhance your browsing experience and analyze site traffic."
                   },
                   {
                     title: "Strictly Necessary Cookies <span class=\"pm__badge\">Always Enabled</span>",
-                    description: "These cookies are necessary...",
+                    description: "These cookies are essential for the website to function properly.",
                     linkedCategory: "necessary"
                   },
                   {
                     title: "Functionality Cookies",
-                    description: "These cookies enable...",
+                    description: "These cookies enable additional features and personalization.",
                     linkedCategory: "functionality"
                   },
                   {
                     title: "Analytics Cookies",
-                    description: "These cookies tell us...",
+                    description: "These cookies help us understand how visitors interact with our website.",
                     linkedCategory: "analytics"
-                  },
-                  {
-                    title: "More information",
-                    description: "For any query... <a class=\"cc__link\" href=\"#yourdomain.com\">contact us</a>."
                   }
                 ]
               }
