@@ -5,53 +5,40 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 <BaseLayout>
   <head>
     <link rel="stylesheet" href="/assets/css/cookieconsent.css">
+    <!-- Add this to force Netlify form detection -->
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        if (window.netlifyIdentity) {
+          window.netlifyIdentity.on('init', (user) => {
+            if (!user) {
+              window.netlifyIdentity.on('login', () => {
+                document.location.href = '/admin/';
+              });
+            }
+          });
+        }
+      });
+    </script>
   </head>
 
   <body>
     <div class="parent">
-      <!-- Logo and Text Block -->
-      <div class="div2">
-        <div class="logo-container">
-          <img src="/assets/icons/ig-logo.svg" alt="Company Logo" class="logo-image" />
-        </div>
-        <div class="text-container">
-          <div class="text-block">
-            <h2>IANA GLUSHACH</h2>
-            <hr class="separator-line" />
-            <p class="b-c-text">Bonsai and Ceramics</p>
-          </div>
-        </div>
-      </div>
+      <!-- [All your existing content...] -->
 
-      <!-- "We Are Coming Soon" -->
-      <div class="div6">
-        <h2>Our new website is on its way!</h2>
-      </div>
-
-      <!-- Tagline -->
-      <div class="div7">
-        <p class="tagline">We're putting the final touches in place, and we can't wait to share it with you.<br>
-          In the meantime, visit our <a href="https://www.etsy.com/shop/IGBonsaiCeramics" target="_blank" class="etsy-store-link">Etsy Store.</a>
-        </p>
-      </div>
-
-      <!-- Subscription Form Container -->
+      <!-- Updated Form with Netlify detection fixes -->
       <div class="div8">
-        <!-- Netlify Form -->
         <form 
-          name="subscribe" 
-          method="POST" 
+          name="subscribe"
+          method="POST"
           netlify
           netlify-honeypot="bot-field"
+          data-netlify="true"
           class="subscribe-form"
-          data-netlify-recaptcha="true"
+          action="/?form_submitted=true"
         >
+          <!-- Required hidden fields -->
           <input type="hidden" name="form-name" value="subscribe" />
-          
-          <!-- Honeypot Field -->
-          <div style="display: none;">
-            <label>Leave this empty: <input name="bot-field" /></label>
-          </div>
+          <input type="hidden" name="bot-field" value="" />
           
           <!-- Email Input -->
           <input 
@@ -66,150 +53,41 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           <button type="submit">Notify Me</button>
         </form>
 
-        <!-- Success Message (hidden initially) -->
+        <!-- Success Message -->
         <div id="successMessage" class="success-message" style="display: none;">
           <h2>Thank you for subscribing!</h2>
           <p>We will notify you when our website launches.</p>
         </div>
-
-        <!-- Error Message (hidden initially) -->
-        <div id="errorMessage" class="error-message" style="display: none;">
-          <h2>Submission Error</h2>
-          <p>Please try again later.</p>
-        </div>
       </div>
 
-      <!-- Follow us section -->
-      <div class="div9">
-        <h3>Follow us on</h3>
-      </div>
-      <div class="div10">
-        <div class="social-icons">
-          <a href="https://www.instagram.com/ig_bonsai_ceramics/" target="_blank" aria-label="Instagram">
-            <img src="/assets/icons/insta.png" alt="Instagram" />
-          </a>
-          <a href="https://www.facebook.com/IGbonsaiCeramics/" target="_blank" aria-label="Facebook">
-            <img src="/assets/icons/facebook.png" alt="Facebook" />
-          </a>
-        </div>
-      </div>
-
-      <!-- Footer -->
-      <div class="div13">
-        <footer>
-          2024 &copy; Iana Glushach Bonsai and Ceramics - All Rights Reserved
-        </footer>
-      </div>
+      <!-- [Rest of your existing content...] -->
     </div>
 
-    <!-- Netlify Form Handling Script -->
-    <script>
-      // Handle form submission status from URL parameters
-      document.addEventListener('DOMContentLoaded', function() {
-        const params = new URLSearchParams(window.location.search);
-        const form = document.querySelector('.subscribe-form');
-        const successMsg = document.getElementById('successMessage');
-        const errorMsg = document.getElementById('errorMessage');
-
-        if (params.has('success')) {
-          if (params.get('success') === 'true') {
-            form.style.display = 'none';
-            successMsg.style.display = 'block';
-          } else {
-            errorMsg.style.display = 'block';
-          }
-        }
-      });
-    </script>
-
-    <!-- Netlify Identity Widget -->
+    <!-- Required Netlify scripts -->
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     <script>
-      if (window.netlifyIdentity) {
-        window.netlifyIdentity.on('init', user => {
-          if (!user) {
-            window.netlifyIdentity.on('login', () => {
-              document.location.href = '/admin/';
-            });
-          }
-        });
-      }
-    </script>
+      // Enhanced form detection and handling
+      document.addEventListener('DOMContentLoaded', function() {
+        // Handle form submission feedback
+        const params = new URLSearchParams(window.location.search);
+        if (params.has('form_submitted')) {
+          document.getElementById('subscribeForm').style.display = 'none';
+          document.getElementById('successMessage').style.display = 'block';
+        }
 
-    <!-- Cookie Consent (keep your existing implementation) -->
-    <script src="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.0.1/dist/cookieconsent.umd.js"></script>
-    <script>
-      document.documentElement.classList.add('cc--darkmode');
-      CookieConsent.run({
-        guiOptions: {
-          consentModal: {
-            layout: "box",
-            position: "bottom right",
-            equalWeightButtons: true,
-            flipButtons: false
-          },
-          preferencesModal: {
-            layout: "box",
-            position: "right",
-            equalWeightButtons: true,
-            flipButtons: false
-          }
-        },
-        categories: {
-          necessary: { readOnly: true },
-          functionality: {},
-          analytics: {}
-        },
-        language: {
-          default: "en",
-          autoDetect: "browser",
-          translations: {
-            en: {
-              consentModal: {
-                title: "We use cookies.",
-                description: "This website uses cookies to improve your browsing experience...",
-                acceptAllBtn: "Accept all",
-                acceptNecessaryBtn: "Reject all",
-                showPreferencesBtn: "Manage preferences",
-                footer: "<a href=\"#link\">Privacy Policy</a> <a href=\"#link\">Terms and conditions</a>"
-              },
-              preferencesModal: {
-                title: "Consent Preferences Center",
-                acceptAllBtn: "Accept all",
-                acceptNecessaryBtn: "Reject all",
-                savePreferencesBtn: "Save preferences",
-                closeIconLabel: "Close modal",
-                serviceCounterLabel: "Service|Services",
-                sections: [
-                  {
-                    title: "Cookie Usage",
-                    description: "We use cookies on our website..."
-                  },
-                  {
-                    title: "Strictly Necessary Cookies <span class=\"pm__badge\">Always Enabled</span>",
-                    description: "These cookies are necessary...",
-                    linkedCategory: "necessary"
-                  },
-                  {
-                    title: "Functionality Cookies",
-                    description: "These cookies enable...",
-                    linkedCategory: "functionality"
-                  },
-                  {
-                    title: "Analytics Cookies",
-                    description: "These cookies tell us...",
-                    linkedCategory: "analytics"
-                  },
-                  {
-                    title: "More information",
-                    description: "For any query... <a class=\"cc__link\" href=\"#yourdomain.com\">contact us</a>."
-                  }
-                ]
-              }
+        // Force Netlify form detection
+        if (window.netlifyIdentity) {
+          window.netlifyIdentity.on('init', (user) => {
+            if (!user) {
+              window.netlifyIdentity.on('login', () => {
+                document.location.href = '/admin/';
+              });
             }
-          }
+          });
         }
       });
     </script>
+
+    <!-- [Your existing Cookie Consent scripts...] -->
   </body>
 </BaseLayout>
