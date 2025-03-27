@@ -5,11 +5,12 @@
 [functions]
   directory = "netlify/functions" # Location of Netlify functions
   node_bundler = "esbuild"        # Use esbuild for bundling
+    package = "@netlify/plugin-forms"
 
 [build.environment]
   EMAIL_USER = "oneplu12@gmail.com"             # Email environment variable
   EMAIL_PASS = "nkvk tdgd wfeh yazv"            # Password environment variable
-  RECAPTCHA_SECRET_KEY = "6LczkncqAAAAAOFsip01z071itLesM3jLkKZmMN9" # Recaptcha secret (if used)
+  RECAPTCHA_SECRET_KEY = "6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB" # Recaptcha secret (if used)
 
 [[redirects]]
   from = "/api/*"
