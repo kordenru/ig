@@ -5,8 +5,7 @@
 [functions]
   directory = "netlify/functions" # Location of Netlify functions
   node_bundler = "esbuild"        # Use esbuild for bundling
-[[plugins]]
-  package = "@netlify/plugin-forms"
+
 
 [build.environment]
   EMAIL_USER = "oneplu12@gmail.com"             # Email environment variable
