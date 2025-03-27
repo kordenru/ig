@@ -16,16 +16,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     <!-- Stylesheet -->
     <link rel="stylesheet" href="/assets/css/cookieconsent.css">
     
-    <!-- Preconnect to External Resources -->
-    <link rel="preconnect" href="https://www.google.com">
-    
     <!-- reCAPTCHA -->
-    <script 
-        <script src="https://www.google.com/recaptcha/enterprise.js?render=6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB">
-
-      async 
-      defer
-    ></script>
+    <script src="https://www.google.com/recaptcha/enterprise.js?render=6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB" async defer></script>
     
     <style>
       .success-message, .error-message {
@@ -61,42 +53,30 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       <!-- Logo and Text Block -->
       <div class="div2">
         <div class="logo-container">
-          <img 
-            src="/assets/icons/ig-logo.svg" 
-            alt="Iana Glushach Logo" 
-            class="logo-image" 
-            width="150" 
-            height="150"
-          />
+          <img src="/assets/icons/ig-logo.svg" alt="Company Logo" class="logo-image" />
         </div>
         <div class="text-container">
           <div class="text-block">
-            <h1>IANA GLUSHACH</h1>
+            <h2>IANA GLUSHACH</h2>
             <hr class="separator-line" />
             <p class="b-c-text">Bonsai and Ceramics</p>
           </div>
         </div>
       </div>
 
-      <!-- Coming Soon Section -->
+      <!-- "We Are Coming Soon" -->
       <div class="div6">
         <h2>Our new website is on its way!</h2>
       </div>
 
       <!-- Tagline -->
       <div class="div7">
-        <p class="tagline">
-          We're putting the final touches in place, and we can't wait to share it with you.<br>
-          In the meantime, visit our <a 
-            href="https://www.etsy.com/shop/IGBonsaiCeramics" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            class="etsy-store-link"
-          >Etsy Store</a>.
+        <p class="tagline">We're putting the final touches in place, and we can't wait to share it with you.<br>
+          In the meantime, visit our <a href="https://www.etsy.com/shop/IGBonsaiCeramics" target="_blank" class="etsy-store-link">Etsy Store.</a>
         </p>
       </div>
 
-      <!-- Subscription Form Section -->
+      <!-- Form Section -->
       <div class="div8">
         <form id="subscribeForm" class="subscribe-form">
           <input 
@@ -106,72 +86,35 @@ import BaseLayout from "../layouts/BaseLayout.astro";
             placeholder="Enter your e-mail" 
             aria-label="Email Input" 
             required 
-            pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
           />
           
-          <button 
-            type="submit" 
-            id="submitButton" 
-            aria-label="Subscribe Button"
-          >
-            Notify Me
-          </button>
+          <button type="submit" id="submitButton">Notify Me</button>
         </form>
 
         <!-- Success Message -->
-        <div 
-          id="successMessage" 
-          class="success-message" 
-          role="alert" 
-          aria-live="polite"
-        >
+        <div id="successMessage" class="success-message">
           <h2>Thank you for subscribing!</h2>
           <p>We will notify you when our website launches.</p>
         </div>
 
         <!-- Error Message -->
-        <div 
-          id="errorMessage" 
-          class="error-message" 
-          role="alert" 
-          aria-live="assertive"
-        >
+        <div id="errorMessage" class="error-message">
           <h2>Submission Error</h2>
           <p id="errorText">Please try again later.</p>
         </div>
       </div>
 
-      <!-- Social Links -->
+      <!-- Follow us section -->
       <div class="div9">
         <h3>Follow us on</h3>
       </div>
       <div class="div10">
         <div class="social-icons">
-          <a 
-            href="https://www.instagram.com/ig_bonsai_ceramics/" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            aria-label="Instagram"
-          >
-            <img 
-              src="/assets/icons/insta.png" 
-              alt="Instagram Icon" 
-              width="40" 
-              height="40"
-            />
+          <a href="https://www.instagram.com/ig_bonsai_ceramics/" target="_blank" aria-label="Instagram">
+            <img src="/assets/icons/insta.png" alt="Instagram" />
           </a>
-          <a 
-            href="https://www.facebook.com/IGbonsaiCeramics/" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            aria-label="Facebook"
-          >
-            <img 
-              src="/assets/icons/facebook.png" 
-              alt="Facebook Icon" 
-              width="40" 
-              height="40"
-            />
+          <a href="https://www.facebook.com/IGbonsaiCeramics/" target="_blank" aria-label="Facebook">
+            <img src="/assets/icons/facebook.png" alt="Facebook" />
           </a>
         </div>
       </div>
@@ -179,12 +122,12 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       <!-- Footer -->
       <div class="div13">
         <footer>
-          {new Date().getFullYear()} &copy; Iana Glushach Bonsai and Ceramics - All Rights Reserved
+          2024 &copy; Iana Glushach Bonsai and Ceramics - All Rights Reserved
         </footer>
       </div>
     </div>
 
-    <!-- Form Handling Script with reCAPTCHA Integration -->
+    <!-- Form Handling Script -->
     <script>
       document.addEventListener('DOMContentLoaded', () => {
         const form = document.getElementById('subscribeForm');
@@ -194,28 +137,14 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         const errorText = document.getElementById('errorText');
         const emailInput = document.getElementById('emailInput');
         
-        // Ensure reCAPTCHA is loaded before form submission
-        function waitForRecaptcha() {
-          return new Promise((resolve, reject) => {
-            const checkRecaptcha = () => {
-              if (window.grecaptcha && window.grecaptcha.execute) {
-                resolve();
-              } else {
-                setTimeout(checkRecaptcha, 100);
-              }
-            };
-            checkRecaptcha();
-          });
-        }
-        
-        // Reset messages on page load
+        // Initialize messages as hidden
         successMsg.style.display = 'none';
         errorMsg.style.display = 'none';
         
         form.addEventListener('submit', async (e) => {
           e.preventDefault();
           
-          // Reset previous messages
+          // Reset messages
           successMsg.style.display = 'none';
           errorMsg.style.display = 'none';
           
@@ -226,20 +155,25 @@ import BaseLayout from "../layouts/BaseLayout.astro";
             return;
           }
           
-          // Disable button and show loading state
+          // Show loading state
           button.disabled = true;
           button.textContent = 'Sending...';
           
           try {
-            // Wait for reCAPTCHA to be fully loaded
-            await waitForRecaptcha();
+            // Wait for reCAPTCHA to load
+            await new Promise((resolve) => {
+              if (window.grecaptcha) return resolve();
+              const interval = setInterval(() => {
+                if (window.grecaptcha) {
+                  clearInterval(interval);
+                  resolve();
+                }
+              }, 100);
+            });
 
             // Get reCAPTCHA token
-            const token = await new Promise((resolve, reject) => {
-              grecaptcha.execute(
-                import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY, 
-                { action: 'subscribe' }
-              ).then(resolve).catch(reject);
+            const token = await grecaptcha.execute('6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB', {
+              action: 'submit'
             });
 
             // Submit form data
@@ -254,17 +188,16 @@ import BaseLayout from "../layouts/BaseLayout.astro";
               })
             });
 
-            const result = await response.json();
-
-            if (response.ok) {
-              form.style.display = 'none';
-              successMsg.style.display = 'block';
-            } else {
-              throw new Error(result.error || 'Submission failed');
+            if (!response.ok) {
+              const error = await response.json();
+              throw new Error(error.error || 'Submission failed');
             }
+
+            form.style.display = 'none';
+            successMsg.style.display = 'block';
           } catch (error) {
-            console.error('Submission Error:', error);
-            errorText.textContent = error.message || 'An unexpected error occurred. Please try again.';
+            console.error('Error:', error);
+            errorText.textContent = error.message || 'An error occurred. Please try again.';
             errorMsg.style.display = 'block';
           } finally {
             button.disabled = false;
@@ -274,7 +207,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       });
     </script>
 
-    <!-- Cookie Consent Script -->
+    <!-- Cookie Consent -->
     <script src="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.0.1/dist/cookieconsent.umd.js"></script>
     <script>
       document.documentElement.classList.add('cc--darkmode');
@@ -305,45 +238,10 @@ import BaseLayout from "../layouts/BaseLayout.astro";
             en: {
               consentModal: {
                 title: "We use cookies.",
-                description: "This website uses cookies to improve your browsing experience and provide personalized content.",
+                description: "This website uses cookies to improve your browsing experience...",
                 acceptAllBtn: "Accept all",
                 acceptNecessaryBtn: "Reject all",
                 showPreferencesBtn: "Manage preferences",
-                footer: "<a href=\"/privacy-policy\">Privacy Policy</a> <a href=\"/terms\">Terms and conditions</a>"
+                footer: "<a href=\"#link\">Privacy Policy</a> <a href=\"#link\">Terms and conditions</a>"
               },
               preferencesModal: {
-                title: "Consent Preferences Center",
-                acceptAllBtn: "Accept all",
-                acceptNecessaryBtn: "Reject all",
-                savePreferencesBtn: "Save preferences",
-                closeIconLabel: "Close modal",
-                serviceCounterLabel: "Service|Services",
-                sections: [
-                  {
-                    title: "Cookie Usage",
-                    description: "We use cookies to enhance your browsing experience and analyze site traffic."
-                  },
-                  {
-                    title: "Strictly Necessary Cookies <span class=\"pm__badge\">Always Enabled</span>",
-                    description: "These cookies are essential for the website to function properly.",
-                    linkedCategory: "necessary"
-                  },
-                  {
-                    title: "Functionality Cookies",
-                    description: "These cookies enable additional features and personalization.",
-                    linkedCategory: "functionality"
-                  },
-                  {
-                    title: "Analytics Cookies",
-                    description: "These cookies help us understand how visitors interact with our website.",
-                    linkedCategory: "analytics"
-                  }
-                ]
-              }
-            }
-          }
-        }
-      });
-    </script>
-  </body>
-</BaseLayout>
