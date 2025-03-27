@@ -172,9 +172,24 @@ import BaseLayout from "../layouts/BaseLayout.astro";
             });
 
             // Get reCAPTCHA token
-            const token = await grecaptcha.execute('6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB', {
-              action: 'submit'
-            });
+           document.addEventListener("DOMContentLoaded", function () {
+    if (typeof grecaptcha !== "undefined") {
+        grecaptcha.ready(async function () {
+            try {
+                const token = await grecaptcha.execute('6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB', {
+                    action: 'submit'
+                });
+                console.log("reCAPTCHA token:", token);
+                // Attach token to form and submit
+            } catch (error) {
+                console.error("reCAPTCHA error:", error);
+            }
+        });
+    } else {
+        console.error("reCAPTCHA is not loaded.");
+    }
+});
+
 
             // Submit form data
             const response = await fetch('/api/subscribe', {
