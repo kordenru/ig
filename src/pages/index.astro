@@ -30,27 +30,51 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
       <!-- Tagline -->
       <div class="div7">
-        <p class="tagline">We’re putting the final touches in place, and we can’t wait to share it with you.<br>
+        <p class="tagline">We're putting the final touches in place, and we can't wait to share it with you.<br>
           In the meantime, visit our <a href="https://www.etsy.com/shop/IGBonsaiCeramics" target="_blank" class="etsy-store-link">Etsy Store.</a>
         </p>
       </div>
 
-      <!-- Subscription form -->
+      <!-- Subscription Form Container -->
       <div class="div8">
-        <form id="subscribeForm" class="subscribe-form">
-          <input type="email" name="email" placeholder="Enter your e-mail" aria-label="Email Input" required />
+        <!-- Netlify Form -->
+        <form 
+          name="subscribe" 
+          method="POST" 
+          netlify
+          netlify-honeypot="bot-field"
+          class="subscribe-form"
+          data-netlify-recaptcha="true"
+        >
+          <input type="hidden" name="form-name" value="subscribe" />
+          
+          <!-- Honeypot Field -->
+          <div style="display: none;">
+            <label>Leave this empty: <input name="bot-field" /></label>
+          </div>
+          
+          <!-- Email Input -->
+          <input 
+            type="email" 
+            name="email" 
+            placeholder="Enter your e-mail" 
+            aria-label="Email Input" 
+            required 
+          />
+          
+          <!-- Submit Button -->
           <button type="submit">Notify Me</button>
         </form>
 
-        <!-- Success message -->
+        <!-- Success Message (hidden initially) -->
         <div id="successMessage" class="success-message" style="display: none;">
           <h2>Thank you for subscribing!</h2>
           <p>We will notify you when our website launches.</p>
         </div>
 
-        <!-- Error message -->
+        <!-- Error Message (hidden initially) -->
         <div id="errorMessage" class="error-message" style="display: none;">
-          <h2>An error occurred!</h2>
+          <h2>Submission Error</h2>
           <p>Please try again later.</p>
         </div>
       </div>
@@ -78,67 +102,113 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       </div>
     </div>
 
-    <!-- reCAPTCHA v3 -->
-    <script src="https://www.google.com/recaptcha/api.js?render=6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB"></script>
+    <!-- Netlify Form Handling Script -->
+    <script>
+      // Handle form submission status from URL parameters
+      document.addEventListener('DOMContentLoaded', function() {
+        const params = new URLSearchParams(window.location.search);
+        const form = document.querySelector('.subscribe-form');
+        const successMsg = document.getElementById('successMessage');
+        const errorMsg = document.getElementById('errorMessage');
 
-    <!-- Cookie Consent -->
+        if (params.has('success')) {
+          if (params.get('success') === 'true') {
+            form.style.display = 'none';
+            successMsg.style.display = 'block';
+          } else {
+            errorMsg.style.display = 'block';
+          }
+        }
+      });
+    </script>
+
+    <!-- Netlify Identity Widget -->
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <script>
+      if (window.netlifyIdentity) {
+        window.netlifyIdentity.on('init', user => {
+          if (!user) {
+            window.netlifyIdentity.on('login', () => {
+              document.location.href = '/admin/';
+            });
+          }
+        });
+      }
+    </script>
+
+    <!-- Cookie Consent (keep your existing implementation) -->
     <script src="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.0.1/dist/cookieconsent.umd.js"></script>
     <script>
       document.documentElement.classList.add('cc--darkmode');
-      CookieConsent.run({ /* ... keep existing cookie consent config ... */ });
-    </script>
-
-    <!-- Updated Form Handling -->
-    <script>
-      document.getElementById('subscribeForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const form = this;
-        const button = form.querySelector('button');
-        
-        // Show loading state
-        button.disabled = true;
-        button.innerHTML = 'Sending...';
-
-        grecaptcha.ready(() => {
-          grecaptcha.execute('6Le5ZXcqAAAAAG6OhIsAINI2jjhiYeuVFNsrgiKB', { 
-            action: 'submit' 
-          }).then(token => {
-            
-
-            /* For real backend integration:
-            fetch('YOUR_ENDPOINT_HERE', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
+      CookieConsent.run({
+        guiOptions: {
+          consentModal: {
+            layout: "box",
+            position: "bottom right",
+            equalWeightButtons: true,
+            flipButtons: false
+          },
+          preferencesModal: {
+            layout: "box",
+            position: "right",
+            equalWeightButtons: true,
+            flipButtons: false
+          }
+        },
+        categories: {
+          necessary: { readOnly: true },
+          functionality: {},
+          analytics: {}
+        },
+        language: {
+          default: "en",
+          autoDetect: "browser",
+          translations: {
+            en: {
+              consentModal: {
+                title: "We use cookies.",
+                description: "This website uses cookies to improve your browsing experience...",
+                acceptAllBtn: "Accept all",
+                acceptNecessaryBtn: "Reject all",
+                showPreferencesBtn: "Manage preferences",
+                footer: "<a href=\"#link\">Privacy Policy</a> <a href=\"#link\">Terms and conditions</a>"
               },
-              body: JSON.stringify({
-                email: form.email.value,
-                'g-recaptcha-response': token
-              })
-            })
-            .then(response => {
-              if (response.ok) {
-                form.style.display = 'none';
-                document.getElementById('successMessage').style.display = 'block';
-              } else {
-                throw new Error('Submission failed');
+              preferencesModal: {
+                title: "Consent Preferences Center",
+                acceptAllBtn: "Accept all",
+                acceptNecessaryBtn: "Reject all",
+                savePreferencesBtn: "Save preferences",
+                closeIconLabel: "Close modal",
+                serviceCounterLabel: "Service|Services",
+                sections: [
+                  {
+                    title: "Cookie Usage",
+                    description: "We use cookies on our website..."
+                  },
+                  {
+                    title: "Strictly Necessary Cookies <span class=\"pm__badge\">Always Enabled</span>",
+                    description: "These cookies are necessary...",
+                    linkedCategory: "necessary"
+                  },
+                  {
+                    title: "Functionality Cookies",
+                    description: "These cookies enable...",
+                    linkedCategory: "functionality"
+                  },
+                  {
+                    title: "Analytics Cookies",
+                    description: "These cookies tell us...",
+                    linkedCategory: "analytics"
+                  },
+                  {
+                    title: "More information",
+                    description: "For any query... <a class=\"cc__link\" href=\"#yourdomain.com\">contact us</a>."
+                  }
+                ]
               }
-            })
-            .catch(error => {
-              document.getElementById('errorMessage').style.display = 'block';
-            })
-            .finally(() => {
-              button.disabled = false;
-              button.innerHTML = 'Notify Me';
-            });
-            */
-          }).catch(error => {
-            console.error('reCAPTCHA Error:', error);
-            document.getElementById('errorMessage').style.display = 'block';
-            button.disabled = false;
-            button.innerHTML = 'Notify Me';
-          });
-        });
+            }
+          }
+        }
       });
     </script>
   </body>
